@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import org.anyframe.exception.BaseException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
  * impossible to access reference services such as datasource or to configure
  * external properties.</li>
  * <li>Avalon logkit can't be used in Spring or Anyframe, because those
- * frameworks use Apache commons-logging for logging.</li>
+ * frameworks use Apache slf4j for logging.</li>
  * </ul>
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
@@ -41,6 +41,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
  */
 public abstract class AbstractIdGenService implements IdGenService,
 		BeanFactoryAware {
+	@SuppressWarnings("unused")
 	private BeanFactory beanFactory;
 
 	private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(
@@ -76,7 +77,7 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * 
 	 * @return Log IdGenService logger
 	 */
-	protected Log getLogger() {
+	protected Logger getLogger() {
 		return IdGenService.LOGGER;
 	}
 

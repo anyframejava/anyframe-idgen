@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -561,7 +561,8 @@ public class TableIdGenServiceJdbcTest {
 		// 2. generate id with stragety (pattern :
 		// 'yyyyMMdd', separator : '', cipers : 5, fillChar :
 		// '0')
-		String currentTime = DateUtil.getCurrentTime("yyyyMMdd");
+		String currentTime = DateUtil.getCurrentDateTimeString("yyyyMMdd");
+		
 
 		for (int i = 0; i < 5; i++) {
 			assertEquals(currentTime + "0000" + (i + 1), idGenerator1
@@ -576,7 +577,7 @@ public class TableIdGenServiceJdbcTest {
 		IdGenService idGenerator2 = (IdGenService) applicationContext
 				.getBean("Ids-TestWithPatternedTimestampStrategy");
 
-		currentTime = DateUtil.getCurrentTime("yyyy-MM-dd HH");
+		currentTime = DateUtil.getCurrentDateTimeString("yyyy-MM-dd HH");
 		// 3. generate id with stragety (pattern :
 		// 'yyyyMMddHHmmssSSS', separator : '-', cipers : 5, fillChar :
 		// '*')
@@ -607,7 +608,7 @@ public class TableIdGenServiceJdbcTest {
 		// 1. generate id with stragety (pattern :
 		// 'yyyyMMdd', separator : '', cipers : 5, fillChar :
 		// '0')
-		String currentTime = DateUtil.getCurrentTime("yyyyMMdd");
+		String currentTime = DateUtil.getCurrentDateTimeString("yyyyMMdd");
 
 		for (int i = 0; i < 5; i++) {
 			assertEquals(currentTime + "0000" + (i + 1), idGenerator1

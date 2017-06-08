@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ import org.springframework.jdbc.support.JdbcUtils;
  * impossible to access reference services such as datasource or to configure
  * external properties.</li>
  * <li>Avalon logkit can't be used in Spring or Anyframe, because those
- * frameworks use Apache commons-logging for logging.</li>
+ * frameworks use Apache slf4j for logging.</li>
  * </ul>
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
@@ -122,12 +122,10 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 
 		tableName = ((tableName.equals("")) ? mTableName : tableName);
 
-		if (getLogger().isDebugEnabled()) {
-			getLogger().debug(
-					"[IDGeneration Service] Allocating a new block of "
-							+ new Integer(blockSize) + " ids for " + tableName
-							+ ".");
-		}
+		getLogger()
+				.debug(
+						"[IDGeneration Service] Allocating a new block of {} ids for {}.",
+						new Object[] { new Integer(blockSize), tableName });
 
 		try {
 			// 2009.10.08 - without handling connection directly
@@ -166,23 +164,19 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 								int inserted = stmt.executeUpdate(query);
 
 								if (inserted < 1) {
-									if (getLogger().isDebugEnabled())
-										getLogger().debug(
-												"[IDGeneration Service] no rows in '"
-														+ mTable
-														+ "' being inserted.");
+									getLogger()
+											.debug(
+													"[IDGeneration Service] no rows in '{}' being inserted.",
+													mTable);
 
 									tries++;
 									continue;
 								}
 							} catch (SQLException e) {
-								if (getLogger().isWarnEnabled())
-									getLogger()
-											.warn(
-													"[IDGeneration Service] Encountered an exception attempting to insert the '"
-															+ mTable
-															+ "'.  May be a transaction conflict. Try again.",
-													e);
+								getLogger()
+										.warn(
+												"[IDGeneration Service] Encountered an exception attempting to insert the '{}'.  May be a transaction conflict. Try again.",
+												mTable, e);
 
 								tries++;
 								continue;
@@ -246,10 +240,9 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 								// transaction conflict.
 								// Try
 								// again.
-								if (getLogger().isDebugEnabled())
-									getLogger()
-											.debug(
-													"[IDGeneration Service] Update resulted in no rows being changed.");
+								getLogger()
+										.debug(
+												"[IDGeneration Service] Update resulted in no rows being changed.");
 							}
 						} catch (SQLException e) {
 							// Assume that this was
@@ -258,13 +251,10 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 							// Just show the exception
 							// message to keep the
 							// output small.
-							if (getLogger().isWarnEnabled())
-								getLogger()
-										.warn(
-												"[IDGeneration Service] Encountered an exception attempting to update the '"
-														+ mTable
-														+ "'.  May be a transaction conflict. Try again. ",
-												e);
+							getLogger()
+									.warn(
+											"[IDGeneration Service] Encountered an exception attempting to update the '{}'.  May be a transaction conflict. Try again. ",
+											mTable, e);
 						}
 
 						// If we got here, then we
@@ -278,10 +268,9 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 
 					// If we got here then we ran out
 					// of tries.
-					if (getLogger().isErrorEnabled())
-						getLogger()
-								.error(
-										"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.");
+					getLogger()
+							.error(
+									"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.");
 					return null;
 				} finally {
 					if (rs != null)
@@ -300,11 +289,10 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 		} catch (Exception e) {
 			if (e instanceof BaseException)
 				throw (BaseException) e;
-			if (getLogger().isErrorEnabled())
-				getLogger()
-						.error(
-								"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
-								e);
+			getLogger()
+					.error(
+							"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
+							e);
 			throw new BaseException(
 					"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
 					e);

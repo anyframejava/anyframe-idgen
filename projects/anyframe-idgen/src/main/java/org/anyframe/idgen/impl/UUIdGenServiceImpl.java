@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import java.util.StringTokenizer;
 import org.anyframe.exception.BaseException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -45,7 +45,8 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 
-	private static Log logger = LogFactory.getLog(UUIdGenServiceImpl.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(UUIdGenServiceImpl.class);
 
 	private static final String ERROR_STRING = "address in the configuration should be a valid IP or MAC Address";
 

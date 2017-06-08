@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,8 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,12 +25,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.anyframe.idgen.IdGenService;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * For testing functions what TableIDGeneration Service supports under the
@@ -35,8 +44,9 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @author SoYon Lim
  * @author JongHoon Kim
  */
-public class TableIdGenServiceMultithreadedJdbcTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
+public class TableIdGenServiceMultithreadedJdbcTest {
 	private static final String TABLE_KEY = "test";
 
 	private static final int ID_COUNT = 1000;
@@ -49,18 +59,12 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 
 	private int mPerThreadGets;
 
-	private HashMap mIds;
+	private HashMap<Long, Long> mIds;
 
 	private Throwable mThrowable;
 
-	/**
-	 * overrided
-	 * 
-	 * @return String[]
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath*:/spring/context-*.xml" };
-	}
+	@Inject
+	private ApplicationContext applicationContext;
 
 	/**
 	 * initialize TestCase
@@ -68,8 +72,8 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to initialize
 	 */
+	@Before
 	public void onSetUp() throws Exception {
-		super.onSetUp();
 		DataSource dataSource = (DataSource) applicationContext
 				.getBean("util_datasource");
 		try {
@@ -108,6 +112,7 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to destroy
 	 */
+	@After
 	public void onTearDown() throws Exception {
 		DataSource dataSource = (DataSource) applicationContext
 				.getBean("util_datasource");
@@ -125,8 +130,6 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 			System.err.println("Unable to cleanup database after test." + e);
 			// Want to continue
 		}
-
-		super.onTearDown();
 	}
 
 	/**
@@ -136,19 +139,19 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
-//	public void testSimpleRequestIdsSize1() throws Exception {
-//		IdGenService idGenerator = (IdGenService) applicationContext
-//				.getBean("Ids-TestSimpleRequestIdsSize1");
-//		long firstId = 1;
-//		int idCount = ID_COUNT;
-//		int threadCount = THREAD_COUNT;
-//
-//		// 1. Initialize the counter in the database.
-//		initializeNextLongId(TABLE_KEY, firstId);
-//
-//		// 2. get next id under multi threaded environment
-//		generalTestCase(idGenerator, firstId, idCount, threadCount);
-//	}
+	// public void testSimpleRequestIdsSize1() throws Exception {
+	// IdGenService idGenerator = (IdGenService) applicationContext
+	// .getBean("Ids-TestSimpleRequestIdsSize1");
+	// long firstId = 1;
+	// int idCount = ID_COUNT;
+	// int threadCount = THREAD_COUNT;
+	//
+	// // 1. Initialize the counter in the database.
+	// initializeNextLongId(TABLE_KEY, firstId);
+	//
+	// // 2. get next id under multi threaded environment
+	// generalTestCase(idGenerator, firstId, idCount, threadCount);
+	// }
 
 	/**
 	 * [Flow #-2] Positive, Negative Case : try to get next Long id from id
@@ -157,6 +160,7 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testSimpleRequestIdsSize10() throws Exception {
 		IdGenService idGenerator = (IdGenService) applicationContext
 				.getBean("Ids-TestSimpleRequestIdsSize10");
@@ -178,6 +182,7 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testSimpleRequestIdsSize100() throws Exception {
 		IdGenService idGenerator = (IdGenService) applicationContext
 				.getBean("Ids-TestSimpleRequestIdsSize100");
@@ -199,6 +204,7 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testBigDecimalRequestIdsSize10() throws Exception {
 		if (isBigDecimalImplemented()) {
 			IdGenService idGenerator = (IdGenService) applicationContext
@@ -244,7 +250,7 @@ public class TableIdGenServiceMultithreadedJdbcTest extends
 
 		mIdGenerator = idGenerator;
 		mPerThreadGets = idCount / threadCount;
-		mIds = new HashMap();
+		mIds = new HashMap<Long, Long>();
 
 		// 1. Create the runnable which will be used by the test.
 		Runnable runnable = new Runnable() {

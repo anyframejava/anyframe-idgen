@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,14 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl;
 
-import org.anyframe.idgen.IdGenService;
-import org.anyframe.idgen.impl.strategy.MixPrefixStrategy;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+
+import javax.inject.Inject;
 
 import org.anyframe.exception.BaseException;
+import org.anyframe.idgen.IdGenService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * For testing functions what UUIDGeneration Service supports, there are some
@@ -28,16 +35,12 @@ import org.anyframe.exception.BaseException;
  * @author SoYon Lim
  * @author JongHoon Kim
  */
-public class UUIdGenServiceTest extends
-		AbstractDependencyInjectionSpringContextTests {
-	/**
-	 * overrided
-	 * 
-	 * @return String[]
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath*:/spring/context-*.xml" };
-	}
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
+public class UUIdGenServiceTest {
+
+	@Inject
+	private ApplicationContext applicationContext;
 
 	/**
 	 * [Flow #-1] Positive Case : try to get next String id and BigDecimal id.
@@ -45,6 +48,7 @@ public class UUIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testUUIdGeneration() throws Exception {
 		IdGenService id = (IdGenService) applicationContext
 				.getBean("UUIdGenerationService");
@@ -65,6 +69,7 @@ public class UUIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testUUIdGenerationNoAddress() throws Exception {
 		IdGenService idGenerator = (IdGenService) applicationContext
 				.getBean("UUIdGenerationServiceWithoutAddress");
@@ -85,6 +90,7 @@ public class UUIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testUUIdGenerationIP() throws Exception {
 		IdGenService idGenerator = (IdGenService) applicationContext
 				.getBean("UUIdGenerationServiceWithIP");
@@ -105,6 +111,7 @@ public class UUIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testNotSupported() throws Exception {
 		IdGenService id = (IdGenService) applicationContext
 				.getBean("UUIdGenerationService");

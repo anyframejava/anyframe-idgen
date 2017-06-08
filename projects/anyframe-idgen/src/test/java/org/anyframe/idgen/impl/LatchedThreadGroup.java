@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl;
 
 /**
@@ -87,8 +87,7 @@ public class LatchedThreadGroup {
 		// Let the system settle down.
 		try {
 			Thread.sleep(50);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 		Runtime runtime = Runtime.getRuntime();
 		System.out.println("Memory: "
@@ -138,8 +137,7 @@ public class LatchedThreadGroup {
 			while (mCompletedCount < threadCount) {
 				try {
 					mSemaphore.wait();
-				}
-				catch (InterruptedException e) {
+				} catch (InterruptedException e) {
 				}
 			}
 		}
@@ -196,8 +194,7 @@ public class LatchedThreadGroup {
 					while (!mLatched) {
 						try {
 							mSemaphore.wait();
-						}
-						catch (InterruptedException e) {
+						} catch (InterruptedException e) {
 						}
 					}
 				}
@@ -205,8 +202,7 @@ public class LatchedThreadGroup {
 				// Run the runnable
 				try {
 					mRunnable.run();
-				}
-				catch (Throwable t) {
+				} catch (Throwable t) {
 					synchronized (mSemaphore) {
 						System.err.println("Error in "
 								+ Thread.currentThread().getName() + t);
@@ -215,8 +211,7 @@ public class LatchedThreadGroup {
 						}
 					}
 				}
-			}
-			finally {
+			} finally {
 				// Say that we are done
 				synchronized (mSemaphore) {
 					mCompletedCount++;

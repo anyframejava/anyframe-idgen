@@ -2,14 +2,11 @@
 <plugin name="idgen" description="Idgen Plugin consists of reference libraries and configurations needed to use Id generation service provided by Anyframe.">
   <groupId>org.anyframe.plugin</groupId>
   <artifactId>anyframe-idgen-pi</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <dependent-plugins>
     <dependent-plugin name="core" version="2.0.0&gt;*"/>
   </dependent-plugins>
   <resources>
-    <resource dir="src/main/java" filtered="true" packaged="true">
-      <include name="**/*.java"/>
-    </resource>
     <resource dir="src/main/resources" filtered="true" packaged="false">
       <include name="**/*.xml"/>
     </resource>
@@ -45,7 +42,7 @@
 	  </fileset>
     </filesets>
   </build>
-  <samples>true</samples>
+  <samples>false</samples>
   <essential>false</essential>
   <checked>false</checked>
 </plugin>

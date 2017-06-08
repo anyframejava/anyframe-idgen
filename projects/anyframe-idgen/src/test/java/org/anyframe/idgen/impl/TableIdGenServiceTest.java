@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,42 +12,44 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.idgen.impl.TableIdGenServiceImpl;
-import org.easymock.MockControl;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
 import org.anyframe.exception.BaseException;
+import org.easymock.MockControl;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
-* @author SoYon Lim
-* @author JongHoon Kim
-*/
-public class TableIdGenServiceTest extends
-		AbstractDependencyInjectionSpringContextTests {
+ * @author SoYon Lim
+ * @author JongHoon Kim
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
+public class TableIdGenServiceTest {
+
+	@Inject
+	private ApplicationContext applicationContext;
+
 	TableIdGenServiceImpl idGenerator = null;
 
 	MockControl dsControl = null;
 
 	DataSource dsMock = null;
-
-	/**
-	 * overrided
-	 * 
-	 * @return String[]
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath*:/spring/context-*.xml" };
-	}
 
 	/**
 	 * [Flow #-1] Negative Case : try to get next long id in case of tx
@@ -56,6 +58,7 @@ public class TableIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testAllocateIdBlockWithTxConflictAutoCommit() throws Exception {
 		initializeResultSetMock(true);
 		idGenerator = (TableIdGenServiceImpl) applicationContext
@@ -77,6 +80,7 @@ public class TableIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testAllocateIdBlockWithTxConflict() throws Exception {
 		initializeResultSetMock(false);
 		idGenerator = (TableIdGenServiceImpl) applicationContext
@@ -98,6 +102,7 @@ public class TableIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testAllocateIdBlockWithSQLException() throws Exception {
 		initializeDataSourceMockThrowSQLException();
 		idGenerator = (TableIdGenServiceImpl) applicationContext
@@ -108,7 +113,9 @@ public class TableIdGenServiceTest extends
 		try {
 			idGenerator.getNextLongId();
 		} catch (BaseException e) {
-			assertEquals("[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.", e.getMessage());
+			assertEquals(
+					"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
+					e.getMessage());
 		}
 	}
 
@@ -159,7 +166,7 @@ public class TableIdGenServiceTest extends
 		// 5. set return value using mock object
 		dsMock.getConnection();
 		dsControl.setReturnValue(connMock);
-		
+
 		connMock.createStatement();
 		connControl.setReturnValue(stmtMock);
 
@@ -188,7 +195,7 @@ public class TableIdGenServiceTest extends
 
 		rsltMock.getLong(1);
 		rsControl.setDefaultReturnValue(1);
-		
+
 		rsltMock.close();
 		rsControl.setDefaultVoidCallable();
 

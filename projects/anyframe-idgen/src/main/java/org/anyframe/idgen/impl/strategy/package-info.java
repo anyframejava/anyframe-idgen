@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 /**
- * Provides interfaces that IdGenService and IdGenrationStrategy are
- * interfaces for generating unique ID mainly used.
+ *  Key Generation Strategies in idgen
  * 
  * @since 1.0.0
  */
-package org.anyframe.idgen;
+package org.anyframe.idgen.impl.strategy;
 

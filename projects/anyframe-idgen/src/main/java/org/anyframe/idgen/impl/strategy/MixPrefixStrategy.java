@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl.strategy;
 
 import org.anyframe.idgen.IdGenStrategy;
@@ -27,16 +27,16 @@ import org.anyframe.util.StringUtil;
  * and cipers is a 5 <br>
  * in result, new id is a 'TEST-00012'.
  * 
- *  * The Configuration to use a MixPrefixStrategy looks like the following:
+ * * The Configuration to use a MixPrefixStrategy looks like the following:
  * 
  * <pre>
  *  &lt;property name=&quot;prefix&quot; value=&quot;TEST-&quot;/&gt;	
  *  &lt;property name=&quot;cipers&quot; value=&quot;5&quot;/&gt;
  *  &lt;property name=&quot;fillChar&quot; value=&quot;0&quot;/&gt;
  * </pre>
-
  * 
- * @author SoYon Lim 
+ * 
+ * @author SoYon Lim
  */
 public class MixPrefixStrategy implements IdGenStrategy {
 	private String prefix;

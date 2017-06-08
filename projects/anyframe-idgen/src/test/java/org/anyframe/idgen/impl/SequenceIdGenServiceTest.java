@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.idgen.impl;
+
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.anyframe.exception.BaseException;
 import org.easymock.MockControl;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * For testing functions what SequenceIDGeneration Service supports, there are
@@ -33,22 +40,18 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @author SoYon Lim
  * @author JongHoon Kim
  */
-public class SequenceIdGenServiceTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
+public class SequenceIdGenServiceTest {
+
+	@Inject
+	private ApplicationContext applicationContext;
+
 	SequenceIdGenServiceImpl idGenerator = null;
 
 	MockControl dsControl = null;
 
 	DataSource dsMock = null;
-
-	/**
-	 * overrided
-	 * 
-	 * @return String[]
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath*:/spring/context-*.xml" };
-	}
 
 	/**
 	 * [Flow #-1] Negative Case : getNextBigDecimalId - In case, result of
@@ -57,6 +60,7 @@ public class SequenceIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testGetNextBigDecimalIdInner() throws Exception {
 		initializeResultSetMock();
 		idGenerator = (SequenceIdGenServiceImpl) applicationContext
@@ -68,8 +72,9 @@ public class SequenceIdGenServiceTest extends
 		try {
 			idGenerator.getNextBigDecimalId();
 		} catch (BaseException e) {
-			assertEquals( "[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.", e
-					.getMessage());
+			assertEquals(
+					"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.",
+					e.getMessage());
 		}
 	}
 
@@ -80,6 +85,7 @@ public class SequenceIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testGetNextLongIdInner() throws Exception {
 		initializeResultSetMock();
 		idGenerator = (SequenceIdGenServiceImpl) applicationContext
@@ -91,8 +97,9 @@ public class SequenceIdGenServiceTest extends
 		try {
 			idGenerator.getNextLongId();
 		} catch (BaseException e) {
-			assertEquals( "[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.", e
-					.getMessage());
+			assertEquals(
+					"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.",
+					e.getMessage());
 		}
 	}
 
@@ -103,6 +110,7 @@ public class SequenceIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testGetNextBigDecimalIdInnerWithSQLException() throws Exception {
 		initializeDataSourceMockThrowSQLException();
 		idGenerator = (SequenceIdGenServiceImpl) applicationContext
@@ -114,7 +122,9 @@ public class SequenceIdGenServiceTest extends
 		try {
 			idGenerator.getNextBigDecimalId();
 		} catch (BaseException e) {
-			assertEquals("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.", e.getMessage());
+			assertEquals(
+					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
+					e.getMessage());
 		}
 	}
 
@@ -125,6 +135,7 @@ public class SequenceIdGenServiceTest extends
 	 * @throws Exception
 	 *             fail to test
 	 */
+	@Test
 	public void testGetNextLongIdInnerWithSQLException() throws Exception {
 		initializeDataSourceMockThrowSQLException();
 		idGenerator = (SequenceIdGenServiceImpl) applicationContext
@@ -136,7 +147,9 @@ public class SequenceIdGenServiceTest extends
 		try {
 			idGenerator.getNextLongId();
 		} catch (BaseException e) {
-			assertEquals("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.", e.getMessage());
+			assertEquals(
+					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
+					e.getMessage());
 		}
 	}
 

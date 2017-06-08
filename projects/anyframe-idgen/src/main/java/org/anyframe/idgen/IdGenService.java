@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@ package org.anyframe.idgen;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.anyframe.exception.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This service generates unique ID mainly used when new record is inserted to
@@ -36,7 +35,7 @@ import org.anyframe.exception.BaseException;
  * properties.</li>
  * <li>
  * Avalon logkit can't be used in Spring or Anyframe, because those frameworks
- * use Apache commons-logging for logging.</li>
+ * use Apache slf4j for logging.</li>
  * </ul>
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
@@ -44,7 +43,7 @@ import org.anyframe.exception.BaseException;
  * @author modified by JongHoon Kim
  */
 public interface IdGenService {
-	Log LOGGER = LogFactory.getLog(IdGenService.class);
+	Logger LOGGER = LoggerFactory.getLogger(IdGenService.class);
 
 	/**
 	 * Returns the next Id from the pool.

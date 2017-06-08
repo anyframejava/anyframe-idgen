@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * properties.</li>
  * <li>
  * Avalon logkit can't be used in Spring or Anyframe, because those frameworks
- * use Apache commons-logging for logging.</li>
+ * use Apache slf4j for logging.</li>
  * </ul>
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
@@ -64,7 +64,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 
 	private String query;
 
-	protected BigDecimal getNextBigDecimalIdInner(String  tableName)
+	protected BigDecimal getNextBigDecimalIdInner(String tableName)
 			throws BaseException {
 		if (!tableName.equals("")) {
 			throw new BaseException(
@@ -75,8 +75,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 		return getNextBigDecimalIdInner();
 	}
 
-	protected long getNextLongIdInner(String tableName)
-			throws BaseException {
+	protected long getNextLongIdInner(String tableName) throws BaseException {
 		if (!tableName.equals("")) {
 			throw new BaseException(
 					"[IDGeneration Service] Current service doesn't support to generate next id based on table '"
@@ -95,10 +94,9 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	 *             if an Id could not be allocated for any reason.
 	 */
 	protected BigDecimal getNextBigDecimalIdInner() throws BaseException {
-		if (getLogger().isDebugEnabled())
-			getLogger().debug(
-					"[IDGeneration Service] Requesting an Id using query: "
-							+ query);
+		getLogger().debug(
+				"[IDGeneration Service] Requesting an Id using query: {}",
+				query);
 		try {
 			// 2009.10.08 - without handling connection directly
 			Connection conn = DataSourceUtils.getConnection(getDataSource());
@@ -108,10 +106,9 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 				if (rs.next()) {
 					return rs.getBigDecimal(1);
 				} else {
-					if (getLogger().isErrorEnabled())
-						getLogger()
-								.error(
-										"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
+					getLogger()
+							.error(
+									"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 					throw new BaseException(
 							"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 				}
@@ -123,11 +120,10 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 		} catch (Exception e) {
 			if (e instanceof BaseException)
 				throw (BaseException) e;
-			if (getLogger().isErrorEnabled())
-				getLogger()
-						.error(
-								"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
-								e);
+			getLogger()
+					.error(
+							"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
+							e);
 			throw new BaseException(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					e);
@@ -143,10 +139,9 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	 *             if an Id could not be allocated for any reason.
 	 */
 	protected long getNextLongIdInner() throws BaseException {
-		if (getLogger().isDebugEnabled())
-			getLogger().debug(
-					"[IDGeneration Service] Requesting an Id using query: "
-							+ query);
+		getLogger().debug(
+				"[IDGeneration Service] Requesting an Id using query: {}",
+				query);
 
 		try {
 			// 2009.10.08 - without handling connection directly
@@ -158,10 +153,9 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 				if (rs.next()) {
 					return rs.getLong(1);
 				} else {
-					if (getLogger().isErrorEnabled())
-						getLogger()
-								.error(
-										"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
+					getLogger()
+							.error(
+									"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 					throw new BaseException(
 							"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 				}
@@ -173,11 +167,10 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 		} catch (Exception e) {
 			if (e instanceof BaseException)
 				throw (BaseException) e;
-			if (getLogger().isErrorEnabled())
-				getLogger()
-						.error(
-								"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
-								e);
+			getLogger()
+					.error(
+							"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
+							e);
 			throw new BaseException(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					e);
