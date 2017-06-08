@@ -116,7 +116,11 @@ public class TableIdGenServiceImpl extends
 			throws BaseException {
 
 		if (getLogger().isDebugEnabled()) {
-			getLogger().debug("[IDGeneration Service] Allocating a new block of " + new Integer(blockSize) + " ids for key_table " + mTableName +".");
+			getLogger().debug(
+					messageSource
+							.getMessage("debug.idgen.allocate.idblock",
+									new Object[] { new Integer(blockSize),
+											mTableName }, Locale.getDefault()));
 		}
 
 		try {
@@ -150,11 +154,21 @@ public class TableIdGenServiceImpl extends
 							// The row does not exist.
 							if (getLogger().isErrorEnabled())
 								getLogger()
-										.error("[IDGeneration Service] Unable to allocate a block of Ids. no row with table_name='" + mTableName + "' exists in the " + mTable + " table.");
+										.error(
+												messageSource
+														.getMessage(
+																"error.idgen.tableid.notallocate.id",
+																new String[] {
+																		mTableName,
+																		mTable },
+																Locale
+																		.getDefault()));
 							// 2009.10.08 - without handling connection directly
 							// if (!autoCommit) { conn.rollback(); }
 
-							throw new BaseException("[IDGeneration Service] Unable to allocate a block of Ids. no row with table_name='" + mTableName + "' exists in the " + mTable + " table.");
+							throw new BaseException(messageSource,
+									"error.idgen.tableid.notallocate.id",
+									new String[] { mTableName, mTable });
 						}
 
 						// Get the next_id using the
@@ -211,7 +225,13 @@ public class TableIdGenServiceImpl extends
 								// again.
 								if (getLogger().isDebugEnabled())
 									getLogger()
-											.debug("[IDGeneration Service] Update resulted in no rows being changed.");
+											.debug(
+													messageSource
+															.getMessage(
+																	"debug.idgen.updated.norows",
+																	new String[] {},
+																	Locale
+																			.getDefault()));
 							}
 						} catch (SQLException e) {
 							// Assume that this was
@@ -221,7 +241,11 @@ public class TableIdGenServiceImpl extends
 							// message to keep the
 							// output small.
 							if (getLogger().isWarnEnabled())
-								getLogger().warn("[IDGeneration Service] Encountered an exception attempting to update the {0} table.  May be a transaction confict. Try again. ", e);
+								getLogger().warn(
+										messageSource.getMessage(
+												"warn.idgen.update.idblock",
+												new String[] {}, Locale
+														.getDefault()));
 						}
 
 						// If we got here, then we
@@ -236,7 +260,9 @@ public class TableIdGenServiceImpl extends
 					// If we got here then we ran out
 					// of tries.
 					if (getLogger().isErrorEnabled())
-						getLogger().error("[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.");
+						getLogger().error(
+								messageSource.getMessage("error.idgen.null.id",
+										new String[] {}, Locale.getDefault()));
 					return null;
 				} finally {
 					if (rs != null)
@@ -256,8 +282,11 @@ public class TableIdGenServiceImpl extends
 			if (e instanceof BaseException)
 				throw (BaseException) e;
 			if (getLogger().isErrorEnabled())
-				getLogger().error("[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.", e);
-			throw new BaseException("[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.", e);
+				getLogger().error(
+						messageSource.getMessage("error.idgen.get.connection",
+								new String[] {}, Locale.getDefault()), e);
+			throw new BaseException(messageSource,
+					"error.idgen.get.connection", e);
 		}
 	}
 

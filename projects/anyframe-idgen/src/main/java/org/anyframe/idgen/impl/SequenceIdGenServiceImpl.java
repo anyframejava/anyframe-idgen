@@ -79,7 +79,10 @@ public class SequenceIdGenServiceImpl extends
 	 */
 	protected BigDecimal getNextBigDecimalIdInner() throws BaseException {
 		if (getLogger().isDebugEnabled())
-			getLogger().debug("[IDGeneration Service] Requesting an Id using query: " + query ); 
+			getLogger().debug(
+					messageSource.getMessage("debug.idgen.sequenceid.query",
+							new String[] { query }, Locale.getDefault()));
+
 		try {
 			// 2009.10.08 - without handling connection directly
 			Connection conn = DataSourceUtils.getConnection(getDataSource());
@@ -91,8 +94,14 @@ public class SequenceIdGenServiceImpl extends
 				} else {
 					if (getLogger().isErrorEnabled())
 						getLogger()
-								.error("[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
-					throw new BaseException("[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
+								.error(
+										messageSource
+												.getMessage(
+														"error.idgen.sequenceid.notallocate.id",
+														new String[] {}, Locale
+																.getDefault()));
+					throw new BaseException(messageSource,
+							"error.idgen.sequenceid.notallocate.id");
 				}
 			} finally {
 				// 2009.10.08 - without handling connection directly
@@ -103,8 +112,11 @@ public class SequenceIdGenServiceImpl extends
 			if (e instanceof BaseException)
 				throw (BaseException) e;
 			if (getLogger().isErrorEnabled())
-				getLogger().error("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.", e);
-			throw new BaseException("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.", e);
+				getLogger().error(
+						messageSource.getMessage("error.idgen.get.connection",
+								new String[] {}, Locale.getDefault()));
+			throw new BaseException(messageSource,
+					"error.idgen.get.connection", e);
 		}
 	}
 
@@ -118,7 +130,9 @@ public class SequenceIdGenServiceImpl extends
 	 */
 	protected long getNextLongIdInner() throws BaseException {
 		if (getLogger().isDebugEnabled())
-			getLogger().debug("[IDGeneration Service] Requesting an Id using query: " + query);
+			getLogger().debug(
+					messageSource.getMessage("debug.idgen.sequenceid.query",
+							new String[] { query }, Locale.getDefault()));
 
 		try {
 			// 2009.10.08 - without handling connection directly
@@ -132,8 +146,14 @@ public class SequenceIdGenServiceImpl extends
 				} else {
 					if (getLogger().isErrorEnabled())
 						getLogger()
-								.error("[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
-					throw new BaseException("[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
+								.error(
+										messageSource
+												.getMessage(
+														"error.idgen.sequenceid.notallocate.id",
+														new String[] {}, Locale
+																.getDefault()));
+					throw new BaseException(messageSource,
+							"error.idgen.sequenceid.notallocate.id");
 				}
 			} finally {
 				// 2009.10.08 - without handling connection directly
@@ -144,8 +164,11 @@ public class SequenceIdGenServiceImpl extends
 			if (e instanceof BaseException)
 				throw (BaseException) e;
 			if (getLogger().isErrorEnabled())
-				getLogger().error("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",e);
-			throw new BaseException("[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.", e);
+				getLogger().error(
+						messageSource.getMessage("error.idgen.get.connection",
+								new String[] {}, Locale.getDefault()));
+			throw new BaseException(messageSource,
+					"error.idgen.get.connection", e);
 		}
 	}
 

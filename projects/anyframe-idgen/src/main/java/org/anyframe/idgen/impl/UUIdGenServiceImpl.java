@@ -25,6 +25,9 @@ import org.anyframe.idgen.IdGenStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 
 /**
  * IDGenerationService that uses UUID generation scheme. Taken from Service
@@ -46,7 +49,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @author JongHoon Kim
  */
 public class UUIdGenServiceImpl implements IdGenService,
-		InitializingBean {
+		ApplicationContextAware, InitializingBean {
+	private MessageSource messageSource;
+
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.messageSource = (MessageSource) applicationContext
+				.getBean("messageSource");
+
+	}
 
 	private static Log logger = LogFactory.getLog(UUIdGenServiceImpl.class);
 
@@ -88,7 +98,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next Byte id
 	 */
 	public byte getNextByteId() throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next Byte id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "Byte" });
 	}
 
 	/**
@@ -98,7 +109,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next Integer id
 	 */
 	public int getNextIntegerId() throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next Integer id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "Integer" });
 	}
 
 	/**
@@ -108,7 +120,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next Long id
 	 */
 	public long getNextLongId() throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next Long id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "Long" });
 	}
 
 	/**
@@ -118,7 +131,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next Short id
 	 */
 	public short getNextShortId() throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next Short id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "Short" });
 	}
 
 	/**
@@ -142,7 +156,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next String id
 	 */
 	public String getNextStringId(IdGenStrategy strategy) throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next String id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "String" });
 	}
 
 	/**
@@ -155,7 +170,8 @@ public class UUIdGenServiceImpl implements IdGenService,
 	 *             fail to get next String id
 	 */
 	public String getNextStringId(String strategyId) throws BaseException {
-		throw new BaseException("[IDGeneration Service] Current service doesn't support to generate next String id.");
+		throw new BaseException(messageSource, "error.idgen.not.supported",
+				new String[] { "String" });
 	}
 
 	public void setAddress(String address) {

@@ -156,8 +156,10 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 		long id = mFirstLong + mAllocated;
 		if (id < 0) {
 			// The value wrapped
-			getLogger().error("[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-			throw new BaseException("[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
+			getLogger().error(
+					messageSource.getMessage("error.idgen.greater.maxid",
+							new String[] { "Long" }, Locale.getDefault()));
+			throw new BaseException(messageSource, "error.idgen.greater.maxid");
 		}
 		mAllocated++;
 

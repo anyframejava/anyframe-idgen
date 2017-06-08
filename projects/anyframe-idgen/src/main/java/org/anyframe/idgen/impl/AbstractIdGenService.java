@@ -16,13 +16,19 @@
 package org.anyframe.idgen.impl;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
-import org.anyframe.exception.BaseException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
 import org.apache.commons.logging.Log;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+
+import org.anyframe.exception.BaseException;
 
 /**
  * Abstract class for IdGenService This service is developed to work on Spring
@@ -40,7 +46,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
  * @author modified by JongHoon Kim
  */
 public abstract class AbstractIdGenService implements IdGenService,
-		BeanFactoryAware {
+		ApplicationContextAware, BeanFactoryAware {
 	private BeanFactory beanFactory;
 
 	private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(
@@ -61,6 +67,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Data type for the Id Pool.
 	 */
 	private boolean mUseBigDecimals = false;
+
+	protected MessageSource messageSource;
 
 	/*---------------------------------------------------------------
 	 * Constructors
@@ -152,8 +160,10 @@ public abstract class AbstractIdGenService implements IdGenService,
 			// long before continuing.
 			if (bd.compareTo(BIG_DECIMAL_MAX_LONG) > 0) {
 				getLogger().error(
-						"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-				throw new BaseException("[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
+						messageSource.getMessage("error.idgen.greater.maxid",
+								new String[] { "Long" }, Locale.getDefault()));
+				throw new BaseException(messageSource,
+						"error.idgen.greater.maxid");
 			}
 			nextId = bd.longValue();
 		} else {
@@ -166,8 +176,10 @@ public abstract class AbstractIdGenService implements IdGenService,
 		// Make sure that the id is valid for the
 		// requested data type.
 		if (nextId > maxId) {
-			getLogger().error("[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-			throw new BaseException("[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
+			getLogger().error(
+					messageSource.getMessage("error.idgen.greater.maxid",
+							new String[] { "Long" }, Locale.getDefault()));
+			throw new BaseException(messageSource, "error.idgen.greater.maxid");
 		}
 
 		return nextId;
@@ -314,5 +326,12 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 */
 	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.messageSource = (MessageSource) applicationContext
+				.getBean("messageSource");
+
 	}
 }
