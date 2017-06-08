@@ -74,7 +74,7 @@ IIdGenerationService idGenerationService;
 /**
  * Create product using UUIdGeneration
  */
-public void create(Product product) {
+public void create(Product product) throws Exception {
     // Get new id and set prodNo.	
     product.setProdNo(<emphasis role="bold">idGenerationService.getNextStringId()</emphasis>);
     productDao.create(product);

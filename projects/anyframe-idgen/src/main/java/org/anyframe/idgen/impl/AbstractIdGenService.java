@@ -21,6 +21,8 @@ import org.anyframe.exception.IdCreationException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 
 /**
  * Abstract class for IdGenService This service is developed to work on Spring
@@ -35,9 +37,12 @@ import org.slf4j.Logger;
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
  * @author modified by SoYon Lim
- * @author modified by JongHoon Kim 
+ * @author modified by JongHoon Kim
  */
-public abstract class AbstractIdGenService implements IdGenService {
+public abstract class AbstractIdGenService implements IdGenService,
+		BeanFactoryAware {
+	@SuppressWarnings("unused")
+	private BeanFactory beanFactory;
 
 	private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(
 			new Long(Long.MAX_VALUE).doubleValue());
@@ -45,7 +50,7 @@ public abstract class AbstractIdGenService implements IdGenService {
 	/**
 	 * Used to manage internal synchronization.
 	 */
-	private final Object mSemaphore = new Object();
+	private Object mSemaphore = new Object();
 
 	private IdGenStrategy strategy = new IdGenStrategy() {
 		public String makeId(String originalId) {
@@ -294,5 +299,15 @@ public abstract class AbstractIdGenService implements IdGenService {
 	 */
 	public void setStrategy(IdGenStrategy strategy) {
 		this.strategy = strategy;
+	}
+
+	/**
+	 * set BeanFactory
+	 * 
+	 * @param beanFactory
+	 *            to be set by Spring Framework
+	 */
+	public void setBeanFactory(BeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
 	}
 }

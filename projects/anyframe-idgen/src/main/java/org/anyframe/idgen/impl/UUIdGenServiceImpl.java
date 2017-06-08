@@ -40,7 +40,7 @@ import org.springframework.beans.factory.InitializingBean;
  * necessary for generating the UUID. If you omit the address, The
  * UUIdGenService will generate a random number for the address value.
  * 
- * @author SoYon Lim 
+ * @author SoYon Lim
  * @author JongHoon Kim
  */
 public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
@@ -53,6 +53,8 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	private String mAddressId;
 
 	private String address;
+
+	private String mTimeId;
 
 	private short mLoopCounter = 0;
 
@@ -76,8 +78,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	}
 
 	/**
-	 * * @see org.anyframe.idgen.IdGenService#getNextByteId() Not supported
-	 * method
+	 * @see org.anyframe.idgen.IdGenService#getNextByteId()
 	 * 
 	 * @return the next Id
 	 * @throws UnsupportedOperationException
@@ -88,8 +89,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextIntegerId() Not supported
-	 *      method
+	 * @see org.anyframe.idgen.IdGenService#getNextIntegerId()
 	 * 
 	 * @return the next Id
 	 * @throws UnsupportedOperationException
@@ -100,7 +100,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextLongId() Not supported method
+	 * @see org.anyframe.idgen.IdGenService#getNextLongId()
 	 * 
 	 * @return the next Id
 	 * @throws UnsupportedOperationException
@@ -111,8 +111,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextShortId() Not supported
-	 *      method
+	 * @see org.anyframe.idgen.IdGenService#getNextShortId()
 	 * 
 	 * @return the next Id
 	 * @throws UnsupportedOperationException
@@ -133,7 +132,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 
 	/**
 	 * @see org.anyframe.idgen.IdGenService#getNextStringId(IdGenStrategy
-	 *      strategy) Not supported method
+	 *      strategy)
 	 * 
 	 * @param strategy
 	 *            strategy for id generation
@@ -147,7 +146,6 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 
 	/**
 	 * @see org.anyframe.idgen.IdGenService#getNextStringId(String strategyId)
-	 *      Not supported method
 	 * 
 	 * @param strategyId
 	 *            strategy identifier for id generation
@@ -199,8 +197,8 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 				int i = 2;
 				try {
 					while (stok.hasMoreTokens()) {
-						addressBytes[i++] = Byte
-								.parseByte(stok.nextToken(), 16);
+						addressBytes[i++] = Integer.valueOf(stok.nextToken(),
+								16).byteValue();
 					}
 				} catch (NumberFormatException e) {
 					throw new InitializationException(ERROR_STRING, e);
@@ -216,8 +214,8 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 					while (stok.hasMoreTokens()) {
 						// String str =
 						// stok.nextToken().toLowerCase();
-						addressBytes[i++] = Byte
-								.parseByte(stok.nextToken(), 16);
+						addressBytes[i++] = Integer.valueOf(stok.nextToken(),
+								16).byteValue();
 					}
 				} catch (NumberFormatException e) {
 					throw new InitializationException(ERROR_STRING, e);
@@ -269,7 +267,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 		bytes6[5] = bytes2[1];
 
 		// Encode the information in base64
-		String mTimeId = Base64.encode(bytes6);
+		mTimeId = Base64.encode(bytes6);
 
 		return (mAddressId + mTimeId).replace('+', '_').replace('/', '@');
 	}

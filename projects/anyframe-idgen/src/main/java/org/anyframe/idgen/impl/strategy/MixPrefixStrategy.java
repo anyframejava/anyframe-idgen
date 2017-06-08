@@ -20,19 +20,19 @@ import org.anyframe.util.StringUtil;
 
 /**
  * MixPrefix is a kind of id generation strategy. MixPrefix assembles prefix,
- * original string, paddingChar into new id. For example, <br>
+ * original string, fillChar into new id. For example, <br>
  * prefix is a 'TEST-' <br>
- * paddingChar is a '0' <br>
+ * fillChar is a '0' <br>
  * original string is a '12' <br>
- * and maxCiphers is a 5 <br>
+ * and cipers is a 5 <br>
  * in result, new id is a 'TEST-00012'.
  * 
  * * The Configuration to use a MixPrefixStrategy looks like the following:
  * 
  * <pre>
  *  &lt;property name=&quot;prefix&quot; value=&quot;TEST-&quot;/&gt;	
- *  &lt;property name=&quot;maxCiphers&quot; value=&quot;5&quot;/&gt;
- *  &lt;property name=&quot;paddingChar&quot; value=&quot;0&quot;/&gt;
+ *  &lt;property name=&quot;cipers&quot; value=&quot;5&quot;/&gt;
+ *  &lt;property name=&quot;fillChar&quot; value=&quot;0&quot;/&gt;
  * </pre>
  * 
  * 
@@ -41,9 +41,9 @@ import org.anyframe.util.StringUtil;
 public class MixPrefixStrategy implements IdGenStrategy {
 	private String prefix;
 
-	protected int maxCiphers = 5;
+	protected int cipers = 5;
 
-	protected char paddingChar = '0';
+	protected char fillChar = '0';
 
 	/**
 	 * convert original id to a new id which apply a specific assembling rule
@@ -53,17 +53,17 @@ public class MixPrefixStrategy implements IdGenStrategy {
 	 * @return assembled id
 	 */
 	public String makeId(String originalId) {
-		return prefix + StringUtil.leftPad(originalId, maxCiphers, paddingChar );
+		return prefix + StringUtil.leftPad(originalId, cipers, fillChar );
 	}
 
 	/**
 	 * properties
 	 * 
-	 * @param maxCiphers
-	 *            maxCiphers
+	 * @param cipers
+	 *            cipers
 	 */
-	public void setMaxCiphers(int maxCiphers) {
-		this.maxCiphers = maxCiphers;
+	public void setCipers(int cipers) {
+		this.cipers = cipers;
 	}
 
 	/**
@@ -79,11 +79,11 @@ public class MixPrefixStrategy implements IdGenStrategy {
 	/**
 	 * properties
 	 * 
-	 * @param paddingChar
-	 *            paddingChar
+	 * @param fillChar
+	 *            fillChar
 	 */
-	public void setPaddingChar(char paddingChar) {
-		this.paddingChar = paddingChar;
+	public void setFillChar(char fillChar) {
+		this.fillChar = fillChar;
 	}
 
 	/**
@@ -91,16 +91,16 @@ public class MixPrefixStrategy implements IdGenStrategy {
 	 * 
 	 * @param prefix
 	 *            prefix
-	 * @param maxCiphers
-	 *            maxCiphers
-	 * @param paddingChar
-	 *            paddingChar
+	 * @param cipers
+	 *            cipers
+	 * @param fillChar
+	 *            fillChar
 	 */
-	public MixPrefixStrategy(String prefix, int maxCiphers, char paddingChar) {
+	public MixPrefixStrategy(String prefix, int cipers, char fillChar) {
 		super();
 		this.prefix = prefix;
-		this.maxCiphers = maxCiphers;
-		this.paddingChar = paddingChar;
+		this.cipers = cipers;
+		this.fillChar = fillChar;
 	}
 
 	/**

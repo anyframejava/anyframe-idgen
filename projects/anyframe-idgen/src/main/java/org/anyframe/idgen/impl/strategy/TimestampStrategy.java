@@ -22,12 +22,12 @@ import org.anyframe.util.StringUtil;
  * TimestampStrategy is a kind of id generation strategy. TimestampStrategy
  * assembles current time based on {@link java.text.SimpleDateFormat} pattern
  * (default is 'yyyyMMdd'), separator between current time and sequence (default
- * is ''), original string, paddingChar into new id. For example, <br>
+ * is ''), original string, fillChar into new id. For example, <br>
  * today is 2011.05.24, pattern is a 'yyyyMMdd' <br>
  * separator is a '-'<br>
- * paddingChar is a '0' <br>
+ * fillChar is a '0' <br>
  * original string is a '12' <br>
- * and maxCiphers is a 5 <br>
+ * and cipers is a 5 <br>
  * in result, new id is a '20110524-00012'.
  * 
  * * The Configuration to use a TimestampStrategy looks like the following:
@@ -35,8 +35,8 @@ import org.anyframe.util.StringUtil;
  * <pre>
  *  &lt;property name=&quot;pattern&quot; value=&quot;yyyyMMdd&quot;/&gt;	
  *  &lt;property name=&quot;separator&quot; value=&quot;-&quot;/&gt;	
- *  &lt;property name=&quot;maxCiphers&quot; value=&quot;5&quot;/&gt;
- *  &lt;property name=&quot;paddingChar&quot; value=&quot;0&quot;/&gt;
+ *  &lt;property name=&quot;cipers&quot; value=&quot;5&quot;/&gt;
+ *  &lt;property name=&quot;fillChar&quot; value=&quot;0&quot;/&gt;
  * </pre>
  * 
  * 
@@ -50,7 +50,7 @@ public class TimestampStrategy extends MixPrefixStrategy {
 
 	public String makeId(String originalId) {
 		return DateUtil.getCurrentDateTime(pattern) + separator
-				+ StringUtil.leftPad(originalId, maxCiphers, paddingChar );
+				+ StringUtil.leftPad(originalId, cipers, fillChar );
 	}
 
 	/**

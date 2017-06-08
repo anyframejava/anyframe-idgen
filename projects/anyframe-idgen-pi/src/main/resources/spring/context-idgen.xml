@@ -40,15 +40,15 @@
 
 	<bean name="tableIdMixPrefix" class="org.anyframe.idgen.impl.strategy.MixPrefixStrategy">
 		<property name="prefix" value="MV-" />
-		<property name="maxCiphers" value="5" />
-		<property name="paddingChar" value="*" />
+		<property name="cipers" value="5" />
+		<property name="fillChar" value="*" />
 	</bean>
 	
 	<bean name="timestamp" class="org.anyframe.idgen.impl.strategy.TimestampStrategy">
 		<property name="pattern" value="yyyy-MM-dd" />
 		<property name="separator" value="-"/>
-		<property name="maxCiphers" value="5" />
-		<property name="paddingChar" value="0" />
+		<property name="cipers" value="5" />
+		<property name="fillChar" value="0" />
 	</bean>	
 	
 <!--idgen-sequenceIdGenService-START-->

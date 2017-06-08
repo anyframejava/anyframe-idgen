@@ -90,20 +90,20 @@
 	
 	<bean name="mixPrefix" class="org.anyframe.idgen.impl.strategy.MixPrefixStrategy">
 		<property name="prefix" value="TEST-"/>
-		<property name="maxCiphers" value="5"/>
-		<property name="paddingChar" value="*"/>
+		<property name="cipers" value="5"/>
+		<property name="fillChar" value="*"/>
 	</bean>
 	
 	<bean name="timestamp" class="org.anyframe.idgen.impl.strategy.TimestampStrategy">
-		<property name="maxCiphers" value="5"/>
-		<property name="paddingChar" value="0"/>
+		<property name="cipers" value="5"/>
+		<property name="fillChar" value="0"/>
 	</bean>	
 	
 	<bean name="timestampWithPattern" class="org.anyframe.idgen.impl.strategy.TimestampStrategy">
 		<property name="pattern" value="yyyy-MM-dd HH"/>
 		<property name="separator" value="-"/>
-		<property name="maxCiphers" value="5"/>
-		<property name="paddingChar" value="*"/>
+		<property name="cipers" value="5"/>
+		<property name="fillChar" value="*"/>
 	</bean>
 	
 	<bean name="Ids-TestCustomColumn" class="org.anyframe.idgen.impl.TableIdGenServiceImpl" destroy-method="destroy">

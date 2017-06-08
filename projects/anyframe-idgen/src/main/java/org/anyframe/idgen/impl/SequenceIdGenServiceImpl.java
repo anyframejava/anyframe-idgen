@@ -21,8 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import org.anyframe.exception.IdCreationException;
+import org.anyframe.exception.JdbcConnectionException;
 import org.anyframe.exception.MissingRequiredPropertyException;
-import org.anyframe.util.StringUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -67,8 +67,8 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	private String query;
 
 	protected BigDecimal getNextBigDecimalIdInner(String tableName) {
-		if (!"".equals(tableName)) {
-			throw new UnsupportedOperationException(
+		if (!tableName.equals("")) {
+			throw new IdCreationException(
 					"[IDGeneration Service] Current service doesn't support to generate next id based on table '"
 							+ tableName + "'.");
 		}
@@ -77,8 +77,8 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	}
 
 	protected long getNextLongIdInner(String tableName) {
-		if (!"".equals(tableName)) {
-			throw new UnsupportedOperationException(
+		if (!tableName.equals("")) {
+			throw new IdCreationException(
 					"[IDGeneration Service] Current service doesn't support to generate next id based on table '"
 							+ tableName + "'.");
 		}
@@ -92,6 +92,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	 * 
 	 * @return the next id as a BigDecimal.
 	 * @throws IdCreationException
+	 * @throws JdbcConnectionException
 	 */
 	protected BigDecimal getNextBigDecimalIdInner() {
 		getLogger().debug(
@@ -124,7 +125,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 					.error(
 							"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 							ex);
-			throw new IdCreationException(
+			throw new JdbcConnectionException(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					ex);
 		}
@@ -136,6 +137,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	 * 
 	 * @return the next id as a long.
 	 * @throws IdCreationException
+	 * @throws JdbcConnectionException
 	 */
 	protected long getNextLongIdInner() {
 		getLogger().debug(
@@ -170,7 +172,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 					.error(
 							"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 							ex);
-			throw new IdCreationException(
+			throw new JdbcConnectionException(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					ex);
 		}
@@ -189,7 +191,7 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 	 * @throws MissingRequiredPropertyException
 	 */
 	public void afterPropertiesSet() {
-		if (StringUtil.isEmpty(this.query)) {
+		if (this.query == null || this.query.equals("")) {
 			throw new MissingRequiredPropertyException(
 					"[IDGeneration Service] must have a 'query' property.");
 		}

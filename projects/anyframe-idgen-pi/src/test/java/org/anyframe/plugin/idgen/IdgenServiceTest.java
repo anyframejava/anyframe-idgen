@@ -71,7 +71,7 @@ public class IdgenServiceTest {
 	IdGenService tableidCustomColumn;
 	
 	/**
-	 * [Flow-1] Positive : try to get next String id and BigDecimal id.
+	 * [Flow #-1] Positive : try to get next String id and BigDecimal id.
 	 * 
 	 * @throws Exception
 	 *             fail to test
@@ -89,7 +89,7 @@ public class IdgenServiceTest {
 	}
 
 	/**
-	 * [Flow-2] Positive Case : try to get next String id from tableid
+	 * [Flow #-2] Positive Case : try to get next String id from tableid
 	 * generator with target table
 	 * 
 	 * @throws Exception
@@ -104,7 +104,7 @@ public class IdgenServiceTest {
 	}
 
 	/**
-	 * [Flow-3] Positive Case : try to get next String id from tableid
+	 * [Flow #-3] Positive Case : try to get next String id from tableid
 	 * generator with target table definition
 	 * 
 	 * @throws Exception
@@ -119,7 +119,7 @@ public class IdgenServiceTest {
 	}
 
 	/**
-	 * [Flow-4] Positive Case : when generate id, apply generation 'MixPrefix'
+	 * [Flow #-4] Positive Case : when generate id, apply generation 'MixPrefix'
 	 * strategy.
 	 * 
 	 * @throws Exception
@@ -134,7 +134,7 @@ public class IdgenServiceTest {
 	}
 
 	/**
-	 * [Flow-5] Positive Case : when generate id, apply generation 'Timestamp'
+	 * [Flow #-5] Positive Case : when generate id, apply generation 'Timestamp'
 	 * strategy.
 	 * 
 	 * @throws Exception
@@ -149,7 +149,7 @@ public class IdgenServiceTest {
 	}
 
 	/**
-	 * [Flow-6] Positive Case : try to get next String id from sequenceid
+	 * [Flow #-6] Positive Case : try to get next String id from sequenceid
 	 * generator
 	 * 
 	 * @throws Exception
@@ -165,7 +165,7 @@ public class IdgenServiceTest {
 	
 	
 	/**
-	 * [Flow-7] Positive Case : try to get next String id from tableid 
+	 * [Flow #-7] Positive Case : try to get next String id from tableid 
 	 * generator with target table which has custom column
 	 * 
 	 * @throws Exception
