@@ -15,79 +15,52 @@
  */
 package org.anyframe.idgen.impl.strategy;
 
-import org.anyframe.idgen.IdGenStrategy;
-import org.anyframe.util.StringUtil;
 
 /**
- * MixPrefix is a kind of id generation strategy. MixPrefix assembles prefix,
- * original string, paddingChar into new id. For example, <br>
- * prefix is a 'TEST-' <br>
+ * PackageNameStrategy is a kind of id generation strategy. PackageNameStrategy assembles prefix(or suffix),
+ * package name, original string, paddingChar into new id. For example, <br>
+ * prefix is a 'true' <br>
  * paddingChar is a '0' <br>
  * original string is a '12' <br>
  * and maxCiphers is a 5 <br>
- * in result, new id is a 'TEST-00012'.
+ * and package name is a org.anyframe.user <br>
+ * and separator is a - <br>
+ * in result, new id is a 'org.anyframe.user-00012'.
  * 
  * * The Configuration to use a MixPrefixStrategy looks like the following:
  * 
  * <pre>
- *  &lt;property name=&quot;prefix&quot; value=&quot;TEST-&quot;/&gt;	
+ *  &lt;property name=&quot;prefix&quot; value=&quot;true&quot;/&gt;
+ *  &lt;property name=&quot;separator&quot; value=&quot;-&quot;/&gt;
  *  &lt;property name=&quot;maxCiphers&quot; value=&quot;5&quot;/&gt;
  *  &lt;property name=&quot;paddingChar&quot; value=&quot;0&quot;/&gt;
  * </pre>
  * 
  * 
- * @author SoYon Lim
- * @deprecated This class is replaced to MixStrategy.class. Use MixStrategy class.
+ * @author Heewon Jung
  * 
  */
-public class MixPrefixStrategy implements IdGenStrategy {
-	private String prefix;
-
-	protected int maxCiphers = 5;
-	
-	protected char paddingChar = '0';
+public class PackageNameStrategy extends AbstractStrategy {
 
 	/**
 	 * convert original id to a new id which apply a specific assembling rule
 	 * 
 	 * @param originalId
 	 *            original id to be converted
-     * @param clazz
+	 * @param clazz
 	 *  		  class information that call ID generation service.
 	 * @return assembled id
 	 */
+	@Override
 	public String makeId(String originalId, Class<?> clazz) {
-		return prefix + StringUtil.leftPad(originalId, maxCiphers, paddingChar );
-	}
-
-	/**
-	 * properties
-	 * 
-	 * @param maxCiphers
-	 *            maxCiphers
-	 */
-	public void setMaxCiphers(int maxCiphers) {
-		this.maxCiphers = maxCiphers;
-	}
-
-	/**
-	 * properties
-	 * 
-	 * @param prefix
-	 *            prefix
-	 */
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	/**
-	 * properties
-	 * 
-	 * @param paddingChar
-	 *            paddingChar
-	 */
-	public void setPaddingChar(char paddingChar) {
-		this.paddingChar = paddingChar;
+		
+		String packageName ="";
+		
+		if(clazz != null){
+			packageName = clazz.getPackage().getName();
+		}
+		
+		return super.getId(originalId, packageName);
 	}
 
 }
