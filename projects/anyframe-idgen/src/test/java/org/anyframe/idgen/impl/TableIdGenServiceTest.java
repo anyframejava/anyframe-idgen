@@ -15,6 +15,9 @@
  */
 package org.anyframe.idgen.impl;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -26,8 +29,6 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.exception.BaseException;
-import org.easymock.MockControl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * @author SoYon Lim
  * @author JongHoon Kim
+ * @author SungHoon Son
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
@@ -46,8 +48,6 @@ public class TableIdGenServiceTest {
 	private ApplicationContext applicationContext;
 
 	TableIdGenServiceImpl idGenerator = null;
-
-	MockControl dsControl = null;
 
 	DataSource dsMock = null;
 
@@ -112,7 +112,7 @@ public class TableIdGenServiceTest {
 
 		try {
 			idGenerator.getNextLongId();
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			assertEquals(
 					"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
 					e.getMessage());
@@ -128,15 +128,13 @@ public class TableIdGenServiceTest {
 	 */
 	private void initializeDataSourceMockThrowSQLException() throws Exception {
 		// 1. set mock object (dataSource)
-		dsControl = MockControl.createControl(DataSource.class);
-		dsMock = (DataSource) dsControl.getMock();
+		dsMock = createMock(DataSource.class);
 
 		// 2. set return value using mock object
-		dsMock.getConnection();
-		dsControl.setThrowable(new SQLException());
-
+		expect(dsMock.getConnection()).andThrow(new SQLException());
+		
 		// 3. replay MockControl
-		dsControl.replay();
+		replay(dsMock);
 	}
 
 	/**
@@ -147,62 +145,47 @@ public class TableIdGenServiceTest {
 	 */
 	private void initializeResultSetMock(boolean autoCommit) throws Exception {
 		// 1. set mock object (dataSource)
-		dsControl = MockControl.createControl(DataSource.class);
-		dsMock = (DataSource) dsControl.getMock();
+		dsMock = createMock(DataSource.class);
 
 		// 2. set mock object (connection)
-		MockControl connControl = MockControl.createControl(Connection.class);
-		Connection connMock = (Connection) connControl.getMock();
+		Connection connMock = createMock(Connection.class);
 
 		// 3. set mock object (PreparedStatement)
-		MockControl stmtControl = MockControl
-				.createControl(PreparedStatement.class);
-		PreparedStatement stmtMock = (PreparedStatement) stmtControl.getMock();
+		PreparedStatement stmtMock = createMock(PreparedStatement.class);
 
 		// 4. set mock object (ResultSet)
-		MockControl rsControl = MockControl.createControl(ResultSet.class);
-		ResultSet rsltMock = (ResultSet) rsControl.getMock();
+		ResultSet rsltMock = createMock(ResultSet.class);
 
 		// 5. set return value using mock object
-		dsMock.getConnection();
-		dsControl.setReturnValue(connMock);
-
-		connMock.createStatement();
-		connControl.setReturnValue(stmtMock);
-
+		expect(dsMock.getConnection()).andReturn(connMock);
+		
+		expect(connMock.createStatement()).andReturn(stmtMock);
+		
 		connMock.close();
-		connControl.setVoidCallable();
-
-		connMock.getAutoCommit();
-		connControl.setReturnValue(autoCommit);
-
+		
+		expect(connMock.getAutoCommit()).andReturn(autoCommit);
+		
 		connMock.rollback();
-		connControl.setDefaultVoidCallable();
-
-		stmtMock
-				.executeQuery("SELECT next_id FROM idstest WHERE table_name = 'test'");
-		stmtControl.setDefaultReturnValue(rsltMock);
-
-		stmtMock.executeUpdate("UPDATE idstest SET next_id = '2' "
-				+ " WHERE table_name = 'test' " + "   AND next_id = '1'");
-		stmtControl.setDefaultReturnValue(0);
-
+		
+		expect(stmtMock
+				.executeQuery("SELECT next_id FROM idstest WHERE table_name = 'test'")).andReturn(rsltMock).anyTimes();
+		
+		expect(stmtMock.executeUpdate("UPDATE idstest SET next_id = 2 "
+				+ "WHERE table_name = 'test' " + "AND next_id = 1")).andReturn(0).anyTimes();
+		
 		stmtMock.close();
-		stmtControl.setVoidCallable();
-
-		rsltMock.next();
-		rsControl.setDefaultReturnValue(true);
-
-		rsltMock.getLong(1);
-		rsControl.setDefaultReturnValue(1);
+		
+		expect(rsltMock.next()).andReturn(true).anyTimes();
+		
+		expect(rsltMock.getLong(1)).andReturn((long)1).anyTimes();
 
 		rsltMock.close();
-		rsControl.setDefaultVoidCallable();
-
+		
 		// 6. replay MockControl
-		dsControl.replay();
-		connControl.replay();
-		stmtControl.replay();
-		rsControl.replay();
+		replay(dsMock);
+		
+		replay(connMock);
+		replay(stmtMock);
+		replay(rsltMock);	
 	}
 }

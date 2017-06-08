@@ -27,7 +27,7 @@ import java.sql.Statement;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.anyframe.idgen.IdGenService;
 import org.junit.After;
 import org.junit.Before;
@@ -137,7 +137,7 @@ public class SequenceIdGenServiceJdbcTest {
 			idGenerator.getNextIntegerId();
 			fail("Should not have gotten an id");
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof IdCreationException);
 		}
 	}
 
@@ -168,188 +168,6 @@ public class SequenceIdGenServiceJdbcTest {
 				"The next_id column in the database did not have the expected value.",
 				testCount + 1, peekNextLongId("idstest"));
 	}
-
-	/**
-	 * [Flow #-3] Positive, Negative Case : try to get next byte id
-	 * 
-	 * @throws Exception
-	 *             fail to test
-	 */
-	// public void testSequenceMaxByteIds() throws Exception {
-	// IdGenService idGenerator =
-	// (IdGenService) applicationContext
-	// .getBean("Ids-TestSequenceMaxByteIds");
-	// int testCount = 100;
-	// // max = 127
-	// long max = Byte.MAX_VALUE;
-	// long initial = max - testCount;
-	//
-	// // 1. initialize the counter in the database.
-	// initializeNextLongId("idstest", initial);
-	//
-	// // 2. get next byte id until limitation of Byte
-	// for (int i = 0; i <= testCount; i++) {
-	// byte id = idGenerator.getNextByteId();
-	// assertEquals("The returned id was not what was expected.", i
-	// + initial, id);
-	// }
-	//
-	// // 3. in case it reached a max value data type
-	// // allows, get next byte id.
-	// try {
-	// byte id = idGenerator.getNextByteId();
-	// fail("Should not have gotten an id: " + id);
-	// } catch (Exception e) {
-	// assertTrue(e instanceof BaseException);
-	// }
-	// }
-
-	/**
-	 * [Flow #-4] Positive, Negative Case : try to get next short id
-	 * 
-	 * @throws Exception
-	 *             fail to test
-	 */
-	// public void testMaxShortIds() throws Exception {
-	// IdGenService idGenerator =
-	// (IdGenService) applicationContext
-	// .getBean("Ids-TestSequenceMaxByteIds");
-	// int testCount = 100;
-	// // max is 32767
-	// long max = Short.MAX_VALUE;
-	// long initial = max - testCount;
-	//
-	// // 1. Initialize the counter in the database.
-	// initializeNextLongId("idstest", initial);
-	//
-	// // 2. get next short id until limitation of
-	// // Short
-	// for (int i = 0; i <= testCount; i++) {
-	// short id = idGenerator.getNextShortId();
-	// assertEquals("The returned id was not what was expected.", i
-	// + initial, id);
-	// }
-	//
-	// // 3. in case it reached a max value data type
-	// // allows, get next short
-	// // id.
-	// try {
-	// short id = idGenerator.getNextShortId();
-	// fail("Should not have gotten an id: " + id);
-	// } catch (Exception e) {
-	// assertTrue(e instanceof BaseException);
-	// }
-	// }
-
-	/**
-	 * [Flow #-5] Positive, Negative Case : try to get next integer id
-	 * 
-	 * @throws Exception
-	 *             fail to test
-	 */
-	// public void testMaxIntegerIds() throws Exception {
-	// IdGenService idGenerator =
-	// (IdGenService) applicationContext
-	// .getBean("Ids-TestSequenceMaxByteIds");
-	// int testCount = 100;
-	// // max is 0x7fffffff
-	// long max = Integer.MAX_VALUE;
-	// long initial = max - testCount;
-	//
-	// // 1. Initialize the counter in the database.
-	// initializeNextLongId("idstest", initial);
-	//
-	// // 2. get next integer id until limitation of
-	// // Integer
-	// for (int i = 0; i <= testCount; i++) {
-	// int id = idGenerator.getNextIntegerId();
-	// assertEquals("The returned id was not what was expected.", i
-	// + initial, id);
-	// }
-	//
-	// // 3. in case it reached a max value data type
-	// // allows, get next
-	// // integer id.
-	// try {
-	// int id = idGenerator.getNextIntegerId();
-	// fail("Should not have gotten an id: " + id);
-	// } catch (Exception e) {
-	// assertTrue(e instanceof BaseException);
-	// }
-	// }
-
-	/**
-	 * [Flow #-6] Positive, Negative Case : try to get next long id
-	 * 
-	 * @throws Exception
-	 *             fail to test
-	 */
-	// public void testMaxLongIds() throws Exception {
-	// IdGenService idGenerator =
-	// (IdGenService) applicationContext
-	// .getBean("Ids-TestSequenceMaxByteIds");
-	// int testCount = 100;
-	// // max is 0x7fffffffffffffffL
-	// long max = Long.MAX_VALUE;
-	// long initial = max - testCount;
-	//
-	// // 1. Initialize the counter in the database.
-	// initializeNextLongId("idstest", initial);
-	//
-	// // 2. get next long id until limitation of Long
-	// for (int i = 0; i <= testCount; i++) {
-	// long id = idGenerator.getNextLongId();
-	// assertEquals("The returned id was not what was expected.", i
-	// + initial, id);
-	// }
-	//
-	// // 3. in case it reached a max value data type
-	// // allows, get next
-	// // long id.
-	// try {
-	// long id = idGenerator.getNextLongId();
-	// fail("Should not have gotten an id: " + id);
-	// } catch (BaseException e) {
-	// assertTrue(e instanceof BaseException);
-	// }
-	// }
-
-	/**
-	 * [Flow #-7] Positive, Negative Case : try to get next bigdecimal id
-	 * 
-	 * @throws Exception
-	 *             fail to test
-	 */
-	// public void testBigDecimalIds() throws Exception {
-	// IdGenService idGenerator =
-	// (IdGenService) applicationContext
-	// .getBean("Ids-TestSequenceMaxBigDecimalIds");
-	// int testCount = 100;
-	// // max is 0x7fffffffffffffffL
-	// BigDecimal max = new BigDecimal(new Long(Long.MAX_VALUE).doubleValue());
-	// BigDecimal initial =
-	// max.subtract(new BigDecimal(new Integer(testCount).doubleValue()));
-	//
-	// // 1. Initialize the counter in the database.
-	// initializeNextBigDecimalId("idstest", initial);
-	//
-	// // 2. get next bigdecimal id
-	// for (int i = 0; i <= testCount; i++) {
-	// BigDecimal id = idGenerator.getNextBigDecimalId();
-	//
-	// // Seems like SEQUENCE statement can't
-	// // handle BigDecimals!
-	// assertEquals("The returned id was not what was expected.", initial
-	// .add(new BigDecimal(new Integer(i).doubleValue())), id);
-	// }
-	//
-	// // 3. get next integer id using query directly.
-	// assertEquals(
-	// "The next_id column in the database did not have the expected value.",
-	// initial
-	// .add(new BigDecimal(new Integer(testCount + 1).doubleValue())),
-	// peekNextBigDecimalId("idstest"));
-	// }
 
 	/*---------------------------------------------------------------
 	 * Utilitity Methods
@@ -388,40 +206,6 @@ public class SequenceIdGenServiceJdbcTest {
 	}
 
 	/**
-	 * initialze next BigDecimal Id
-	 * 
-	 * @param sequenceName
-	 *            sequence name
-	 * @param nextId
-	 *            next id
-	 */
-	// private void initializeNextBigDecimalId(String sequenceName,
-	// BigDecimal nextId) {
-	// DataSource dataSource =
-	// (DataSource) applicationContext.getBean("util_datasource");
-	// try {
-	// Connection conn = dataSource.getConnection();
-	// try {
-	// Statement statement = conn.createStatement();
-	//
-	// try {
-	// statement.executeUpdate("DROP SEQUENCE " + sequenceName);
-	// } catch (SQLException se) {
-	// }
-	//
-	// statement.executeUpdate("CREATE SEQUENCE " + sequenceName
-	// + " MINVALUE " + nextId);
-	//
-	// } finally {
-	// conn.close();
-	// }
-	// } catch (Exception e) {
-	// System.err.println("Unable to initialize next_id." + e);
-	// fail("Unable to initialize next_id. " + e);
-	// }
-	// }
-
-	/**
 	 * get next Long id using query directly.
 	 * 
 	 * @param sequenceName
@@ -454,40 +238,4 @@ public class SequenceIdGenServiceJdbcTest {
 			return -1; // for compiler
 		}
 	}
-
-	/**
-	 * get next BigDecimal id using query directly.
-	 * 
-	 * @param sequenceName
-	 *            sequence name
-	 * @return next BigDecimal Id
-	 */
-	// private BigDecimal peekNextBigDecimalId(String sequenceName) {
-	// DataSource dataSource =
-	// (DataSource) applicationContext.getBean("util_datasource");
-	// try {
-	// Connection conn = dataSource.getConnection();
-	// try {
-	// Statement statement = conn.createStatement();
-	//
-	// ResultSet rs =
-	// statement.executeQuery("SELECT " + sequenceName
-	// + ".CURRVAL FROM DUAL");
-	//
-	// if (rs.next()) {
-	// return rs.getBigDecimal(1).add(new BigDecimal("1"));
-	// } else {
-	// fail(sequenceName + " sequence doesn't exist.");
-	// return new BigDecimal("-1"); // for
-	// // compiler
-	// }
-	// } finally {
-	// conn.close();
-	// }
-	// } catch (Exception e) {
-	// System.err.println("Unable to peek next_id." + e);
-	// fail("Unable to peek next_id. " + e);
-	// return new BigDecimal("-1"); // for compiler
-	// }
-	// }
 }

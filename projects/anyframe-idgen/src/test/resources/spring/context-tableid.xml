@@ -10,6 +10,7 @@
 		<property name="table" value="idstest"/>
 		<property name="key" value="does-not-exist"/>		
 	</bean>
+	
 	<bean name="Ids-TestSimpleRequestIdsSize1" class="org.anyframe.idgen.impl.TableIdGenServiceImpl" destroy-method="destroy">
 		<property name="dataSource" ref="util_datasource"/>
 		<property name="blockSize" value="1"/>
@@ -89,19 +90,38 @@
 	
 	<bean name="mixPrefix" class="org.anyframe.idgen.impl.strategy.MixPrefixStrategy">
 		<property name="prefix" value="TEST-"/>
-		<property name="cipers" value="5"/>
-		<property name="fillChar" value="*"/>
+		<property name="maxCiphers" value="5"/>
+		<property name="paddingChar" value="*"/>
 	</bean>
 	
 	<bean name="timestamp" class="org.anyframe.idgen.impl.strategy.TimestampStrategy">
-		<property name="cipers" value="5"/>
-		<property name="fillChar" value="0"/>
+		<property name="maxCiphers" value="5"/>
+		<property name="paddingChar" value="0"/>
 	</bean>	
 	
 	<bean name="timestampWithPattern" class="org.anyframe.idgen.impl.strategy.TimestampStrategy">
 		<property name="pattern" value="yyyy-MM-dd HH"/>
 		<property name="separator" value="-"/>
-		<property name="cipers" value="5"/>
-		<property name="fillChar" value="*"/>
-	</bean>		
+		<property name="maxCiphers" value="5"/>
+		<property name="paddingChar" value="*"/>
+	</bean>
+	
+	<bean name="Ids-TestCustomColumn" class="org.anyframe.idgen.impl.TableIdGenServiceImpl" destroy-method="destroy">
+		<property name="dataSource" ref="util_datasource"/>
+		<property name="blockSize" value="1"/>
+		<property name="table" value="MY_IDS"/>
+		<property name="key" value="test"/>
+		<property name="keyColumn" value="MY_KEY"/>
+		<property name="nextValueColumn" value="MY_ID"/>				
+	</bean>
+	
+	<bean name="Ids-TestNonExistingCustomColumn" class="org.anyframe.idgen.impl.TableIdGenServiceImpl" destroy-method="destroy">
+		<property name="dataSource" ref="util_datasource"/>
+		<property name="blockSize" value="1"/>
+		<property name="table" value="MY_IDS"/>
+		<property name="key" value="test"/>
+		<property name="keyColumn" value="NON_EXISTING_COLUMN"/>
+		<property name="nextValueColumn" value="MY_ID"/>				
+	</bean>
+			
 </beans>	

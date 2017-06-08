@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 
@@ -29,7 +29,7 @@ import org.springframework.jdbc.support.JdbcUtils;
  * The TableIdGenerator requests blocks of ids from a Database table. The table
  * consists of two columns one called <code>table_name</code> of type CHAR or
  * VARCHAR, and the second called <code>next_id</code> of an integer type large
- * enough to hold your largest ids.
+ * enough to hold your largest ids. (These two column names can be configured.)
  * <p>
  * The Configuration to use a TableIdGenerator looks like the following:
  * 
@@ -38,11 +38,24 @@ import org.springframework.jdbc.support.JdbcUtils;
  *  &lt;property name=&quot;blockSize&quot; value=&quot;1&quot;/&gt;	
  *  &lt;property name=&quot;table&quot; value=&quot;idstest&quot;/&gt;
  *  &lt;property name=&quot;strategy&quot; ref=&quot;mixPrefix&quot;/&gt;
+ *  &lt;property name=&quot;key&quot; value=&quot;MOVIE_ID&quot;/&gt;
+ *  &lt;property name=&quot;keyColumn&quot; value=&quot;TABLE_NAME&quot;/&gt;
+ *  &lt;property name=&quot;nextValueColumn&quot; value=&quot;NEXT_ID&quot;/&gt; 
  * </pre>
  * 
- * Property 'key', value of 'table_name' column in id management table can be
+ * Property 'key', value of the keyColumn in id management table can be
  * <ul>
  * <li>entered as input parameter when calling getNextStringId().</li>
+ * <li>defined as property of IdGenerator bean.</li>
+ * </ul>
+ * Property 'keyColumn', name of the primary key column in id management table
+ * can be
+ * <ul>
+ * <li>defined as property of IdGenerator bean.</li>
+ * </ul>
+ * Property 'nextValueColumn', name of the id column in id management table can
+ * be
+ * <ul>
  * <li>defined as property of IdGenerator bean.</li>
  * </ul>
  * 
@@ -77,6 +90,7 @@ import org.springframework.jdbc.support.JdbcUtils;
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
  * @author modified by SoYon Lim
  * @author modified by JongHoon Kim
+ * @author modified by SungHoon Son
  */
 public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 
@@ -89,6 +103,16 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 	 * TableName used to reference which ids to allocate.
 	 */
 	private String mTableName = "id";
+
+	/**
+	 * ColumnName used to reference primary key column.
+	 */
+	private String keyColumn = "table_name";
+
+	/**
+	 * ColumnName used to reference id column.
+	 */
+	private String nextValueColumn = "next_id";
 
 	/*---------------------------------------------------------------
 	 * Constructors
@@ -114,13 +138,12 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 	 *            Long.
 	 * @return either a Long or a BigDecimal depending on the value of
 	 *         useBigDecimals
-	 * @throws BaseException
-	 *             if a block of ids can not be allocated.
+	 * @throws IdCreationException
 	 */
 	private Object allocateIdBlock(String tableName, int blockSize,
-			boolean useBigDecimals) throws BaseException {
+			boolean useBigDecimals) {
 
-		tableName = ((tableName.equals("")) ? mTableName : tableName);
+		tableName = (("".equals(tableName)) ? mTableName : tableName);
 
 		getLogger()
 				.debug(
@@ -152,15 +175,16 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 						Object oldNextId = null;
 						// Find out what the next
 						// available id is.
-						String query = "SELECT next_id FROM " + mTable
-								+ " WHERE table_name = '" + tableName + "'";
+						String query = "SELECT " + nextValueColumn + " FROM "
+								+ mTable + " WHERE " + keyColumn + " = '"
+								+ tableName + "'";
 						rs = stmt.executeQuery(query);
 
 						if (!rs.next()) {
 							try {
-								query = "INSERT INTO " + mTable
-										+ "(table_name, next_id) VALUES ('"
-										+ tableName + "', '1')";
+								query = "INSERT INTO " + mTable + "("
+										+ keyColumn + ", " + nextValueColumn
+										+ ") VALUES('" + tableName + "', '1')";
 								int inserted = stmt.executeUpdate(query);
 
 								if (inserted < 1) {
@@ -221,10 +245,11 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 							// handles large
 							// BigDecimals
 							// correctly.
-							query = "UPDATE " + mTable + " SET next_id = "
-									+ newNextId + " " + " WHERE table_name = '"
-									+ tableName + "' " + "   AND next_id = "
-									+ nextId + "";
+							query = "UPDATE " + mTable + " SET "
+									+ nextValueColumn + " = " + newNextId
+									+ " WHERE " + keyColumn + " = '"
+									+ tableName + "' " + "AND "
+									+ nextValueColumn + " = " + nextId + "";
 							int updated = stmt.executeUpdate(query);
 							if (updated >= 1) {
 								// Update was
@@ -287,13 +312,11 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 			}
 			// 2009.10.08 - without handling connection directly
 		} catch (Exception e) {
-			if (e instanceof BaseException)
-				throw (BaseException) e;
 			getLogger()
 					.error(
 							"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
 							e);
-			throw new BaseException(
+			throw new IdCreationException(
 					"[IDGeneration Service] Although too many retries, unable to allocate a block of Ids.",
 					e);
 		}
@@ -310,11 +333,9 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 	 * @param blockSize
 	 *            number of Ids which are to be allocated.
 	 * @return The first id in the allocated block.
-	 * @throws BaseException
-	 *             if there it was not possible to allocate a block of ids.
 	 */
 	protected BigDecimal allocateBigDecimalIdBlock(String tableName,
-			int blockSize) throws BaseException {
+			int blockSize) {
 		return (BigDecimal) allocateIdBlock(tableName, blockSize, true);
 	}
 
@@ -326,11 +347,8 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 	 * @param blockSize
 	 *            number of Ids which are to be allocated.
 	 * @return The first id in the allocated block.
-	 * @throws BaseException
-	 *             if there it was not possible to allocate a block of ids.
 	 */
-	protected long allocateLongIdBlock(String tableName, int blockSize)
-			throws BaseException {
+	protected long allocateLongIdBlock(String tableName, int blockSize) {
 		Long id = (Long) allocateIdBlock(tableName, blockSize, false);
 
 		return id.longValue();
@@ -345,5 +363,13 @@ public class TableIdGenServiceImpl extends AbstractDataSourceBlockIdGenService {
 
 	public void setKey(String key) {
 		this.mTableName = key;
+	}
+
+	public void setKeyColumn(String keyColumn) {
+		this.keyColumn = keyColumn;
+	}
+
+	public void setNextValueColumn(String nextValueColumn) {
+		this.nextValueColumn = nextValueColumn;
 	}
 }

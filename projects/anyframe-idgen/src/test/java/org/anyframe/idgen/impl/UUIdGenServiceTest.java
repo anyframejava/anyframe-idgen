@@ -15,12 +15,11 @@
  */
 package org.anyframe.idgen.impl;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 
-import org.anyframe.exception.BaseException;
 import org.anyframe.idgen.IdGenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,35 +118,35 @@ public class UUIdGenServiceTest {
 		try {
 			id.getNextByteId();
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof UnsupportedOperationException);
 		}
 
 		// 2. get next integer id
 		try {
 			id.getNextIntegerId();
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof UnsupportedOperationException);
 		}
 
 		// 3. get next long id
 		try {
 			id.getNextLongId();
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof UnsupportedOperationException);
 		}
 
 		// 4. get next short id
 		try {
 			id.getNextShortId();
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof UnsupportedOperationException);
 		}
 
 		// 5. get next string id with a specific strategy
 		try {
 			id.getNextStringId("mixPrefix");
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof UnsupportedOperationException);
 		}
 	}
 }

@@ -17,7 +17,7 @@ package org.anyframe.idgen;
 
 import java.math.BigDecimal;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,46 +49,51 @@ public interface IdGenService {
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid big-decimals
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	BigDecimal getNextBigDecimalId() throws BaseException;
+	BigDecimal getNextBigDecimalId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid longs
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	long getNextLongId() throws BaseException;
+	long getNextLongId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid integers
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	int getNextIntegerId() throws BaseException;
+	int getNextIntegerId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid shorts
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	short getNextShortId() throws BaseException;
+	short getNextShortId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid bytes
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	byte getNextByteId() throws BaseException;
+	byte getNextByteId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id based on key defined in configuration file. If there
@@ -96,10 +101,11 @@ public interface IdGenService {
 	 * original next id.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	String getNextStringId() throws BaseException;
+	String getNextStringId() throws IdCreationException;
 
 	/**
 	 * Returns the next Id based on input parameter 'tableName'. If there is a
@@ -109,8 +115,9 @@ public interface IdGenService {
 	 * @param tableName
 	 *            key of id management table
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
+	 * 
+	 * @throws IdCreationException
+	 *             if there is any problem returning the next Id
 	 */
-	String getNextStringId(String tableName) throws BaseException;
+	String getNextStringId(String tableName) throws IdCreationException;
 }

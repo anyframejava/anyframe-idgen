@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.StringTokenizer;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.InitializationException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import org.springframework.beans.factory.InitializingBean;
  * necessary for generating the UUID. If you omit the address, The
  * UUIdGenService will generate a random number for the address value.
  * 
- * @author SoYon Lim
+ * @author SoYon Lim 
  * @author JongHoon Kim
  */
 public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
@@ -54,17 +54,13 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 
 	private String address;
 
-	private String mTimeId;
-
 	private short mLoopCounter = 0;
 
 	/**
 	 * @see org.anyframe.idgen.IdGenService#getNextBigDecimalId()
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid big-decimals
 	 */
-	public BigDecimal getNextBigDecimalId() throws BaseException {
+	public BigDecimal getNextBigDecimalId() {
 		String newId = getNextStringId();
 		byte[] bytes = newId.getBytes(); // get 16
 		// bytes
@@ -80,50 +76,49 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextByteId()
+	 * * @see org.anyframe.idgen.IdGenService#getNextByteId() Not supported
+	 * method
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid bytes
+	 * @throws UnsupportedOperationException
 	 */
-	public byte getNextByteId() throws BaseException {
-		throw new BaseException(
+	public byte getNextByteId() {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next Byte id.");
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextIntegerId()
+	 * @see org.anyframe.idgen.IdGenService#getNextIntegerId() Not supported
+	 *      method
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid integers
+	 * @throws UnsupportedOperationException
 	 */
-	public int getNextIntegerId() throws BaseException {
-		throw new BaseException(
+	public int getNextIntegerId() {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next Integer id.");
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextLongId()
+	 * @see org.anyframe.idgen.IdGenService#getNextLongId() Not supported method
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid longs
+	 * @throws UnsupportedOperationException
 	 */
-	public long getNextLongId() throws BaseException {
-		throw new BaseException(
+	public long getNextLongId() {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next Long id.");
 	}
 
 	/**
-	 * @see org.anyframe.idgen.IdGenService#getNextShortId()
+	 * @see org.anyframe.idgen.IdGenService#getNextShortId() Not supported
+	 *      method
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid shorts
+	 * @throws UnsupportedOperationException
 	 */
-	public short getNextShortId() throws BaseException {
-		throw new BaseException(
+	public short getNextShortId() {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next Short id.");
 	}
 
@@ -131,39 +126,36 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	 * @see org.anyframe.idgen.IdGenService#getNextStringId()
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
 	 */
-	public String getNextStringId() throws BaseException {
+	public String getNextStringId() {
 		return getUUId();
 	}
 
 	/**
 	 * @see org.anyframe.idgen.IdGenService#getNextStringId(IdGenStrategy
-	 *      strategy)
+	 *      strategy) Not supported method
 	 * 
 	 * @param strategy
 	 *            strategy for id generation
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
+	 * @throws UnsupportedOperationException
 	 */
-	public String getNextStringId(IdGenStrategy strategy) throws BaseException {
-		throw new BaseException(
+	public String getNextStringId(IdGenStrategy strategy) {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next String id.");
 	}
 
 	/**
 	 * @see org.anyframe.idgen.IdGenService#getNextStringId(String strategyId)
+	 *      Not supported method
 	 * 
 	 * @param strategyId
 	 *            strategy identifier for id generation
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
+	 * @throws UnsupportedOperationException
 	 */
-	public String getNextStringId(String strategyId) throws BaseException {
-		throw new BaseException(
+	public String getNextStringId(String strategyId) {
+		throw new UnsupportedOperationException(
 				"[IDGeneration Service] Current service doesn't support to generate next String id.");
 	}
 
@@ -174,10 +166,9 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 	/**
 	 * Called by the Container to initialize.
 	 * 
-	 * @throws Exception
-	 *             if there is any problem initializing
+	 * @throws InitializationException
 	 */
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		byte[] addressBytes = new byte[6];
 
 		if (null == address) {
@@ -194,7 +185,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 				// we should have an IP
 				StringTokenizer stok = new StringTokenizer(address, ".");
 				if (stok.countTokens() != 4) {
-					throw new BaseException(ERROR_STRING);
+					throw new InitializationException(ERROR_STRING);
 				}
 				// this is meant to insure that id's
 				// made from ip addresses
@@ -208,31 +199,31 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 				int i = 2;
 				try {
 					while (stok.hasMoreTokens()) {
-						addressBytes[i++] = Integer.valueOf(stok.nextToken(),
-								16).byteValue();
+						addressBytes[i++] = Byte
+								.parseByte(stok.nextToken(), 16);
 					}
-				} catch (Exception e) {
-					throw new BaseException(ERROR_STRING, e);
+				} catch (NumberFormatException e) {
+					throw new InitializationException(ERROR_STRING, e);
 				}
 			} else if (address.indexOf(":") > 0) {
 				// we should have a MAC
 				StringTokenizer stok = new StringTokenizer(address, ":");
 				if (stok.countTokens() != 6) {
-					throw new BaseException(ERROR_STRING);
+					throw new InitializationException(ERROR_STRING);
 				}
 				int i = 0;
 				try {
 					while (stok.hasMoreTokens()) {
 						// String str =
 						// stok.nextToken().toLowerCase();
-						addressBytes[i++] = Integer.valueOf(stok.nextToken(),
-								16).byteValue();
+						addressBytes[i++] = Byte
+								.parseByte(stok.nextToken(), 16);
 					}
-				} catch (Exception e) {
-					throw new BaseException(ERROR_STRING, e);
+				} catch (NumberFormatException e) {
+					throw new InitializationException(ERROR_STRING, e);
 				}
 			} else {
-				throw new BaseException(ERROR_STRING);
+				throw new InitializationException(ERROR_STRING);
 			}
 		}
 		mAddressId = Base64.encode(addressBytes);
@@ -278,7 +269,7 @@ public class UUIdGenServiceImpl implements IdGenService, InitializingBean {
 		bytes6[5] = bytes2[1];
 
 		// Encode the information in base64
-		mTimeId = Base64.encode(bytes6);
+		String mTimeId = Base64.encode(bytes6);
 
 		return (mAddressId + mTimeId).replace('+', '_').replace('/', '@');
 	}

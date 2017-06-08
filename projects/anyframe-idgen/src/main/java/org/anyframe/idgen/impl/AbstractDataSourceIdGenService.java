@@ -16,7 +16,6 @@
 package org.anyframe.idgen.impl;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -60,10 +59,8 @@ public abstract class AbstractDataSourceIdGenService extends
 	 * the caller when no longer needed.
 	 * 
 	 * @return an open DB connection.
-	 * @throws SQLException
-	 *             if the connection can not be obtained for any reason.
 	 */
-	protected Connection getConnection() throws SQLException {
+	protected Connection getConnection() {
 		// 2009.10.08 - without handling connection directly
 		return DataSourceUtils.getConnection(getDataSource());
 	}

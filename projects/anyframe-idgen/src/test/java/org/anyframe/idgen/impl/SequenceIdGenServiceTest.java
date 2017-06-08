@@ -15,6 +15,9 @@
  */
 package org.anyframe.idgen.impl;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
@@ -25,8 +28,7 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.exception.BaseException;
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
@@ -49,8 +51,6 @@ public class SequenceIdGenServiceTest {
 
 	SequenceIdGenServiceImpl idGenerator = null;
 
-	MockControl dsControl = null;
-
 	DataSource dsMock = null;
 
 	/**
@@ -71,7 +71,7 @@ public class SequenceIdGenServiceTest {
 
 		try {
 			idGenerator.getNextBigDecimalId();
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			assertEquals(
 					"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.",
 					e.getMessage());
@@ -96,7 +96,7 @@ public class SequenceIdGenServiceTest {
 
 		try {
 			idGenerator.getNextLongId();
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			assertEquals(
 					"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.",
 					e.getMessage());
@@ -121,7 +121,7 @@ public class SequenceIdGenServiceTest {
 
 		try {
 			idGenerator.getNextBigDecimalId();
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			assertEquals(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					e.getMessage());
@@ -146,7 +146,7 @@ public class SequenceIdGenServiceTest {
 
 		try {
 			idGenerator.getNextLongId();
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			assertEquals(
 					"[IDGeneration Service] We can't get a connection. So, unable to allocate a block of Ids.",
 					e.getMessage());
@@ -160,17 +160,16 @@ public class SequenceIdGenServiceTest {
 	 * @throws Exception
 	 *             fail to set Mock
 	 */
-	private void initializeDataSourceMockThrowSQLException() throws Exception {
+	private void initializeDataSourceMockThrowSQLException() throws SQLException {
 		// 1. set mock object (dataSource)
-		dsControl = MockControl.createControl(DataSource.class);
-		dsMock = (DataSource) dsControl.getMock();
-
+		
+		dsMock = createMock(DataSource.class);
+		
 		// 2. set return value using mock object
-		dsMock.getConnection();
-		dsControl.setThrowable(new SQLException());
-
+		expect(dsMock.getConnection()).andThrow(new SQLException());
+		
 		// 3. replay MockControl
-		dsControl.replay();
+		replay(dsMock);
 	}
 
 	/**
@@ -179,44 +178,35 @@ public class SequenceIdGenServiceTest {
 	 * @throws Exception
 	 *             fail to set Mock
 	 */
-	private void initializeResultSetMock() throws Exception {
+	private void initializeResultSetMock() throws SQLException {
+		
 		// 1. set mock object (dataSource)
-		dsControl = MockControl.createControl(DataSource.class);
-		dsMock = (DataSource) dsControl.getMock();
+		dsMock = createMock(DataSource.class);
 
 		// 2. set mock object (connection)
-		MockControl connControl = MockControl.createControl(Connection.class);
-		Connection connMock = (Connection) connControl.getMock();
+		Connection connMock = createMock(Connection.class);
 
 		// 3. set mock object (PreparedStatement)
-		MockControl stmtControl = MockControl
-				.createControl(PreparedStatement.class);
-		PreparedStatement stmtMock = (PreparedStatement) stmtControl.getMock();
+		PreparedStatement stmtMock = createMock(PreparedStatement.class);
 
 		// 4. set mock object (ResultSet)
-		MockControl rsControl = MockControl.createControl(ResultSet.class);
-		ResultSet rsltMock = (ResultSet) rsControl.getMock();
+		ResultSet rsltMock = EasyMock.createMock(ResultSet.class);
 
 		// 5. set return value using mock object
-		dsMock.getConnection();
-		dsControl.setReturnValue(connMock);
-
-		connMock.prepareStatement("SELECT idstest.NEXTVAL FROM DUAL");
-		connControl.setReturnValue(stmtMock);
+		expect(dsMock.getConnection()).andReturn(connMock);
+		
+		expect(connMock.prepareStatement("SELECT idstest.NEXTVAL FROM DUAL")).andReturn(stmtMock);
 
 		connMock.close();
-		connControl.setVoidCallable();
-
-		stmtMock.executeQuery();
-		stmtControl.setReturnValue(rsltMock);
-
-		rsltMock.next();
-		rsControl.setReturnValue(false);
-
+		
+		expect(stmtMock.executeQuery()).andReturn(rsltMock);
+		
+		expect(rsltMock.next()).andReturn(false);
+		
 		// 6. replay MockControl
-		dsControl.replay();
-		connControl.replay();
-		stmtControl.replay();
-		rsControl.replay();
+		replay(dsMock);
+		replay(connMock);
+		replay(stmtMock);
+		replay(rsltMock);
 	}
 }

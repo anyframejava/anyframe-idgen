@@ -2,46 +2,29 @@
 <plugin name="idgen" description="Idgen Plugin consists of reference libraries and configurations needed to use Id generation service provided by Anyframe.">
   <groupId>org.anyframe.plugin</groupId>
   <artifactId>anyframe-idgen-pi</artifactId>
-  <version>1.0.4</version>
+  <version>1.5.0</version>
   <dependent-plugins>
-    <dependent-plugin name="core" version="2.0.0&gt;*"/>
+    <dependent-plugin name="core" version="2.0.0&gt;*&gt;1.4.0"/>
   </dependent-plugins>
+  
   <resources>
     <resource dir="src/main/resources" filtered="true" packaged="false">
-      <include name="**/*.xml"/>
+      <include name="**/*idgen*.xml"/>
     </resource>
     <resource dir="src/test/java" filtered="true" packaged="true">
-      <include name="**/*.java"/>
+      <include name="**/idgen/**/*.java"/>
     </resource>
     <resource dir="src/test/resources" filtered="true" packaged="false">
-      <include name="**/*.xml"/>
-    </resource>
-    <resource dir="src/main/webapp/WEB-INF/jsp" filtered="false" packaged="false">
-      <include name="**/*.jsp"/>
+      <include name="**/*idgen*.xml"/>
     </resource>
     <resource dir="db/scripts" filtered="false" packaged="false">
       <include name="**/idgen*.sql" />
     </resource>
+    <resource dir="db/resources" filtered="false" packaged="false">
+      <include name="**/*idgen*.xml" />
+    </resource>  
   </resources>
-  <build>
-    <filesets>
-      <fileset dir="src/main/resources" filtered="true" packaged="false">
-        <include name="**/*idgen*.xml"/>
-      </fileset>
-      <fileset dir="src/test/java" filtered="true" packaged="true">
-        <include name="**/org/anyframe/plugin/idgen/**/*.java"/>
-      </fileset>
-      <fileset dir="src/test/resources" filtered="true" packaged="false">
-        <include name="**/*idgen*.xml"/>
-      </fileset>
-      <fileset dir="db/resources" filtered="false" packaged="false">
-        <include name="**/*idgen.xml"/>
-      </fileset>
-      <fileset dir="db/scripts" filtered="false" packaged="false">
-		<include name="**/idgen*.sql" />
-	  </fileset>
-    </filesets>
-  </build>
+  
   <samples>false</samples>
   <essential>false</essential>
   <checked>false</checked>

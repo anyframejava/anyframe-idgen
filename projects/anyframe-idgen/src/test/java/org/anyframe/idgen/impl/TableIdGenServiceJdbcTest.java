@@ -28,7 +28,7 @@ import java.sql.Statement;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.util.DateUtil;
 import org.junit.After;
@@ -45,6 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * 
  * @author SoYon Lim
  * @author JongHoon Kim
+ * @author SungHoon Son
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath*:/spring/context-*.xml" })
@@ -82,7 +83,15 @@ public class TableIdGenServiceJdbcTest {
 					System.out.println("ids drop fail.");
 					e.printStackTrace();
 				}
-
+				
+				try {
+					statement.executeUpdate("DROP TABLE MY_IDS");
+				} catch (SQLException e) {
+					// The table was probably just not
+					// there. Ignore this.
+					System.out.println("my_ids drop fail.");
+					e.printStackTrace();
+				}
 			} finally {
 				conn.close();
 			}
@@ -129,6 +138,18 @@ public class TableIdGenServiceJdbcTest {
 					// fail.");
 					// e.printStackTrace();
 				}
+				
+				try {
+					statement.executeUpdate("DROP TABLE MY_IDS");
+				} catch (SQLException e) {
+					// The table was probably just not
+					// there. Ignore this.
+					// System.out.println("ids drop
+					// fail.");
+					// e.printStackTrace();
+				}
+				
+				
 
 				// 2. Create the table that we will use
 				// in this test.
@@ -144,6 +165,12 @@ public class TableIdGenServiceJdbcTest {
 						+ "table_name varchar(16) NOT NULL, "
 						+ "next_id DECIMAL(30) NOT NULL, "
 						+ "PRIMARY KEY (table_name))");
+				
+				statement.executeUpdate("CREATE TABLE MY_IDS( "
+						+ "MY_KEY varchar(16) NOT NULL, "
+						+ "MY_ID DECIMAL(30) NOT NULL, "
+						+ "PRIMARY KEY (MY_KEY))");
+				
 				statement.executeUpdate("INSERT INTO ids VALUES('id','0')");
 			} finally {
 				conn.close();
@@ -310,7 +337,7 @@ public class TableIdGenServiceJdbcTest {
 			byte id = idGenerator.getNextByteId();
 			fail("Should not have gotten an id: " + id);
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof IdCreationException);
 		}
 	}
 
@@ -348,7 +375,7 @@ public class TableIdGenServiceJdbcTest {
 			short id = idGenerator.getNextShortId();
 			fail("Should not have gotten an id: " + id);
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof IdCreationException);
 		}
 	}
 
@@ -385,7 +412,7 @@ public class TableIdGenServiceJdbcTest {
 			int id = idGenerator.getNextIntegerId();
 			fail("Should not have gotten an id: " + id);
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof IdCreationException);
 		}
 	}
 
@@ -421,7 +448,7 @@ public class TableIdGenServiceJdbcTest {
 			long id = idGenerator.getNextLongId();
 			fail("Should not have gotten an id: " + id);
 		} catch (Exception e) {
-			assertTrue(e instanceof BaseException);
+			assertTrue(e instanceof IdCreationException);
 		}
 	}
 
@@ -561,7 +588,7 @@ public class TableIdGenServiceJdbcTest {
 		// 2. generate id with stragety (pattern :
 		// 'yyyyMMdd', separator : '', cipers : 5, fillChar :
 		// '0')
-		String currentTime = DateUtil.getCurrentDateTimeString("yyyyMMdd");
+		String currentTime = DateUtil.getCurrentDateTime("yyyyMMdd");
 		
 
 		for (int i = 0; i < 5; i++) {
@@ -577,7 +604,7 @@ public class TableIdGenServiceJdbcTest {
 		IdGenService idGenerator2 = (IdGenService) applicationContext
 				.getBean("Ids-TestWithPatternedTimestampStrategy");
 
-		currentTime = DateUtil.getCurrentDateTimeString("yyyy-MM-dd HH");
+		currentTime = DateUtil.getCurrentDateTime("yyyy-MM-dd HH");
 		// 3. generate id with stragety (pattern :
 		// 'yyyyMMddHHmmssSSS', separator : '-', cipers : 5, fillChar :
 		// '*')
@@ -608,12 +635,49 @@ public class TableIdGenServiceJdbcTest {
 		// 1. generate id with stragety (pattern :
 		// 'yyyyMMdd', separator : '', cipers : 5, fillChar :
 		// '0')
-		String currentTime = DateUtil.getCurrentDateTimeString("yyyyMMdd");
+		String currentTime = DateUtil.getCurrentDateTime("yyyyMMdd");
 
 		for (int i = 0; i < 5; i++) {
 			assertEquals(currentTime + "0000" + (i + 1), idGenerator1
 					.getNextStringId("MOVIE_NEW"));
 		}
+	}
+	
+	/**
+	 * [Flow #-15] Positive Case : try to get integer id from customized table(custom nextId, custom keyColumn) 
+	 * 
+	 * @throws Exception
+	 *             fail to test
+	 */
+	@Test
+	public void testCustomColumn() throws Exception{
+		IdGenService idGenService = (IdGenService) applicationContext.getBean("Ids-TestCustomColumn");
+		
+		int testCount = 100;
+
+		// 1. get next integer id until 99
+		for (int i = 1; i <= testCount; i++) {
+			int id = idGenService.getNextIntegerId();
+			assertEquals("The returned id was not what was expected.", i, id);
+		}		
+	}
+	
+	/**
+	 * [Flow #-16] Negative Case : try to get integer id from non existing custom column
+	 * 
+	 * @throws Exception
+	 *             fail to test
+	 */
+	@Test
+	public void testNonExistingCustomColumn() throws Exception{
+		TableIdGenServiceImpl idGenService = (TableIdGenServiceImpl) applicationContext.getBean("Ids-TestNonExistingCustomColumn");
+		
+		try{
+			idGenService.getNextIntegerId();
+			fail("Should not have gotten an id");
+		}catch(Exception e){
+			assertTrue(e instanceof IdCreationException);	
+		}	
 	}
 
 	/*---------------------------------------------------------------

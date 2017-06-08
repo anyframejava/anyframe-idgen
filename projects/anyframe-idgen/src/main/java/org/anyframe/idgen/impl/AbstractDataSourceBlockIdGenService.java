@@ -17,7 +17,7 @@ package org.anyframe.idgen.impl;
 
 import java.math.BigDecimal;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -70,11 +70,9 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 	 * @param blockSize
 	 *            number of Ids which are to be allocated.
 	 * @return The first id in the allocated block.
-	 * @throws BaseException
-	 *             if there it was not possible to allocate a block of ids.
 	 */
 	protected abstract BigDecimal allocateBigDecimalIdBlock(String tableName,
-			int blockSize) throws BaseException;
+			int blockSize);
 
 	/**
 	 * Allocates a block, of the given size, of ids from the database.
@@ -84,17 +82,13 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 	 * @param blockSize
 	 *            number of Ids which are to be allocated.
 	 * @return The first id in the allocated block.
-	 * @throws BaseException
-	 *             if there it was not possible to allocate a block of ids.
 	 */
-	protected abstract long allocateLongIdBlock(String tableName, int blockSize)
-			throws BaseException;
+	protected abstract long allocateLongIdBlock(String tableName, int blockSize);
 
 	/*---------------------------------------------------------------
 	 * AbstractIdGenerator Methods
 	 *-------------------------------------------------------------*/
-	protected BigDecimal getNextBigDecimalIdInner(String tableName)
-			throws BaseException {
+	protected BigDecimal getNextBigDecimalIdInner(String tableName) {
 		if (mAllocated >= mBlockSize) {
 			// Need to allocate a new batch of ids
 			try {
@@ -103,12 +97,12 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 
 				// Reset the allocated count
 				mAllocated = 0;
-			} catch (BaseException be) {
+			} catch (IdCreationException ex) {
 				// Set the allocated count to signal
 				// that there are not any ids
 				// available.
 				mAllocated = Integer.MAX_VALUE;
-				throw be;
+				throw ex;
 			}
 		}
 
@@ -127,14 +121,12 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 	 * synchronized and when the data type is configured to be BigDecimal.
 	 * 
 	 * @return the next id as a BigDecimal.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
 	 */
-	protected BigDecimal getNextBigDecimalIdInner() throws BaseException {
+	protected BigDecimal getNextBigDecimalIdInner() {
 		return getNextBigDecimalIdInner("");
 	}
 
-	protected long getNextLongIdInner() throws BaseException {
+	protected long getNextLongIdInner() {
 		return getNextLongIdInner("");
 	}
 
@@ -146,10 +138,9 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 	 *            key of id management table
 	 * 
 	 * @return the next id as a long.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
+	 * @throws IdCreationException
 	 */
-	protected long getNextLongIdInner(String tableName) throws BaseException {
+	protected long getNextLongIdInner(String tableName) {
 		if (mAllocated >= mBlockSize) {
 			// Need to allocate a new batch of ids
 			try {
@@ -157,12 +148,12 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 
 				// Reset the allocated count
 				mAllocated = 0;
-			} catch (BaseException e) {
+			} catch (IdCreationException ex) {
 				// Set the allocated count to signal
 				// that there are not any ids
 				// available.
 				mAllocated = Integer.MAX_VALUE;
-				throw e;
+				throw ex;
 			}
 		}
 
@@ -175,7 +166,7 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 			getLogger()
 					.error(
 							"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-			throw new BaseException(
+			throw new IdCreationException(
 					"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
 		}
 		mAllocated++;
@@ -196,10 +187,8 @@ public abstract class AbstractDataSourceBlockIdGenService extends
 	/**
 	 * Called by the Container to initialize the component.
 	 * 
-	 * @throws Exception
-	 *             if there were any problems durring initialization.
 	 */
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		// Set the state so that the first request for
 		// an id will load in a
 		// block of ids.

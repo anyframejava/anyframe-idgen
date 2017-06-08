@@ -17,12 +17,10 @@ package org.anyframe.idgen.impl;
 
 import java.math.BigDecimal;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.IdCreationException;
 import org.anyframe.idgen.IdGenService;
 import org.anyframe.idgen.IdGenStrategy;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 
 /**
  * Abstract class for IdGenService This service is developed to work on Spring
@@ -37,12 +35,9 @@ import org.springframework.beans.factory.BeanFactoryAware;
  * 
  * @author <a href="mailto:dev@avalon.apache.org">Avalon Development Team</a>
  * @author modified by SoYon Lim
- * @author modified by JongHoon Kim
+ * @author modified by JongHoon Kim 
  */
-public abstract class AbstractIdGenService implements IdGenService,
-		BeanFactoryAware {
-	@SuppressWarnings("unused")
-	private BeanFactory beanFactory;
+public abstract class AbstractIdGenService implements IdGenService {
 
 	private static final BigDecimal BIG_DECIMAL_MAX_LONG = new BigDecimal(
 			new Long(Long.MAX_VALUE).doubleValue());
@@ -50,7 +45,7 @@ public abstract class AbstractIdGenService implements IdGenService,
 	/**
 	 * Used to manage internal synchronization.
 	 */
-	private Object mSemaphore = new Object();
+	private final Object mSemaphore = new Object();
 
 	private IdGenStrategy strategy = new IdGenStrategy() {
 		public String makeId(String originalId) {
@@ -89,11 +84,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * synchronized and when the data type is configured to be BigDecimal.
 	 * 
 	 * @return the next id as a BigDecimal.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
 	 */
-	protected abstract BigDecimal getNextBigDecimalIdInner()
-			throws BaseException;
+	protected abstract BigDecimal getNextBigDecimalIdInner();
 
 	/**
 	 * Gets the next id as a Big Decimal. This method will only be called when
@@ -102,21 +94,16 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * @param tableName
 	 *            key of id management table
 	 * @return the next id as a BigDecimal.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
 	 */
-	protected abstract BigDecimal getNextBigDecimalIdInner(String tableName)
-			throws BaseException;
+	protected abstract BigDecimal getNextBigDecimalIdInner(String tableName);
 
 	/**
 	 * Gets the next id as a long. This method will only be called when
 	 * synchronized and when the data type is configured to be long.
 	 * 
 	 * @return the next id as a long.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
 	 */
-	protected abstract long getNextLongIdInner() throws BaseException;
+	protected abstract long getNextLongIdInner();
 
 	/**
 	 * Gets the next id as a long. This method will only be called when
@@ -125,11 +112,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * @param tableName
 	 *            key of id management table
 	 * @return the next id as a long.
-	 * @throws BaseException
-	 *             if an Id could not be allocated for any reason.
 	 */
-	protected abstract long getNextLongIdInner(String tableName)
-			throws BaseException;
+	protected abstract long getNextLongIdInner(String tableName);
 
 	/**
 	 * By default, the IdGenerator will operate using a backend datatype of type
@@ -162,10 +146,9 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * @param maxId
 	 *            max id
 	 * @return long value to be less than the specified maxId
-	 * @throws BaseException
-	 *             if the next id is larger than the specified maxId.
+	 * @throws IdCreationException
 	 */
-	protected final long getNextLongIdChecked(long maxId) throws BaseException {
+	protected final long getNextLongIdChecked(long maxId) {
 		long nextId;
 		if (mUseBigDecimals) {
 			// Use BigDecimal data type
@@ -181,7 +164,7 @@ public abstract class AbstractIdGenService implements IdGenService,
 				getLogger()
 						.error(
 								"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-				throw new BaseException(
+				throw new IdCreationException(
 						"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
 			}
 			nextId = bd.longValue();
@@ -198,7 +181,7 @@ public abstract class AbstractIdGenService implements IdGenService,
 			getLogger()
 					.error(
 							"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
-			throw new BaseException(
+			throw new IdCreationException(
 					"[IDGeneration Service] Unable to provide an id.   No more Ids are available, the maximum Long value has been reached.");
 		}
 
@@ -209,8 +192,7 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * IdGenerator Methods
 	 *-------------------------------------------------------------*/
 
-	protected final BigDecimal getNextBigDecimalId(String tableName)
-			throws BaseException {
+	protected final BigDecimal getNextBigDecimalId(String tableName) {
 		BigDecimal bd;
 		if (mUseBigDecimals) {
 			// Use BigDecimal data type
@@ -232,10 +214,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid big-decimals
 	 */
-	public final BigDecimal getNextBigDecimalId() throws BaseException {
+	public final BigDecimal getNextBigDecimalId() {
 		return getNextBigDecimalId("");
 	}
 
@@ -243,10 +223,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid longs
 	 */
-	public final long getNextLongId() throws BaseException {
+	public final long getNextLongId() {
 		return getNextLongIdChecked(Long.MAX_VALUE);
 	}
 
@@ -254,10 +232,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid integers
 	 */
-	public final int getNextIntegerId() throws BaseException {
+	public final int getNextIntegerId() {
 		return (int) getNextLongIdChecked(Integer.MAX_VALUE);
 	}
 
@@ -265,10 +241,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid shorts
 	 */
-	public final short getNextShortId() throws BaseException {
+	public final short getNextShortId() {
 		return (short) getNextLongIdChecked(Short.MAX_VALUE);
 	}
 
@@ -276,10 +250,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * Returns the next Id from the pool.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the range of valid bytes
 	 */
-	public final byte getNextByteId() throws BaseException {
+	public final byte getNextByteId() {
 		return (byte) getNextLongIdChecked(Byte.MAX_VALUE);
 	}
 
@@ -288,10 +260,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * apply next id to strategy. Otherwise return original next id.
 	 * 
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
 	 */
-	public final String getNextStringId() throws BaseException {
+	public final String getNextStringId() {
 		return strategy.makeId(getNextBigDecimalId().toString());
 	}
 
@@ -302,10 +272,8 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 * @param tableName
 	 *            key of id management table
 	 * @return the next Id
-	 * @throws BaseException
-	 *             if the next id is outside of the valid range
 	 */
-	public String getNextStringId(String tableName) throws BaseException {
+	public String getNextStringId(String tableName) {
 		return strategy.makeId(getNextBigDecimalId(tableName).toString());
 	}
 
@@ -326,15 +294,5 @@ public abstract class AbstractIdGenService implements IdGenService,
 	 */
 	public void setStrategy(IdGenStrategy strategy) {
 		this.strategy = strategy;
-	}
-
-	/**
-	 * set BeanFactory
-	 * 
-	 * @param beanFactory
-	 *            to be set by Spring Framework
-	 */
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
 	}
 }
