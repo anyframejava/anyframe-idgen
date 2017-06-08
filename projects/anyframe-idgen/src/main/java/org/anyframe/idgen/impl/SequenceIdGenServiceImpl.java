@@ -25,6 +25,7 @@ import org.anyframe.exception.MissingRequiredPropertyException;
 import org.anyframe.util.StringUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 
 /**
  * The SequenceIdGenerator requests each Id using a sequence in a database.
@@ -100,9 +101,11 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 		try {
 			// 2009.10.08 - without handling connection directly
 			Connection conn = DataSourceUtils.getConnection(getDataSource());
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
 			try {
-				PreparedStatement stmt = conn.prepareStatement(query);
-				ResultSet rs = stmt.executeQuery();
+				stmt = conn.prepareStatement(query);
+				rs = stmt.executeQuery();
 				if (rs.next()) {
 					return rs.getBigDecimal(1);
 				} else {
@@ -113,8 +116,17 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 							"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 				}
 			} finally {
+				if (rs != null) {
+					JdbcUtils.closeResultSet(rs);
+				}
+				if (stmt != null) {
+					JdbcUtils.closeStatement(stmt);
+				}
 				// 2009.10.08 - without handling connection directly
-				DataSourceUtils.releaseConnection(conn, getDataSource());
+				if(conn != null) {
+					DataSourceUtils.releaseConnection(conn, getDataSource());	
+				}
+				
 			}
 			// 2009.10.08 - without handling connection directly
 		} catch (Exception ex) {
@@ -145,10 +157,11 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 		try {
 			// 2009.10.08 - without handling connection directly
 			Connection conn = DataSourceUtils.getConnection(getDataSource());
-
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
 			try {
-				PreparedStatement stmt = conn.prepareStatement(query);
-				ResultSet rs = stmt.executeQuery();
+				stmt = conn.prepareStatement(query);
+				rs = stmt.executeQuery();
 				if (rs.next()) {
 					return rs.getLong(1);
 				} else {
@@ -159,8 +172,16 @@ public class SequenceIdGenServiceImpl extends AbstractDataSourceIdGenService
 							"[IDGeneration Service] Unable to allocate a block of Ids. Query for Id did not return a value.");
 				}
 			} finally {
+				if (rs != null) {
+					JdbcUtils.closeResultSet(rs);
+				}
+				if (stmt != null) {
+					JdbcUtils.closeStatement(stmt);
+				}
 				// 2009.10.08 - without handling connection directly
-				DataSourceUtils.releaseConnection(conn, getDataSource());
+				if(conn != null) {
+					DataSourceUtils.releaseConnection(conn, getDataSource());	
+				}
 			}
 			// 2009.10.08 - without handling connection directly
 		} catch (Exception ex) {
