@@ -9,35 +9,22 @@
 
     <informaltable>
       <tgroup cols="6">
-        <colspec colnum="1" colname="col1" colwidth="1*"/>
-        <colspec colnum="2" colname="col2" colwidth="2*"/>
-        <colspec colnum="3" colname="col3" colwidth="4*"/>
+        <colspec colnum="1" colname="col1" colwidth="2*"/>
+        <colspec colnum="2" colname="col2" colwidth="6*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
         <colspec colnum="4" colname="col4" colwidth="1*"/>
-        <colspec colnum="5" colname="col5" colwidth="1*"/>
-        <colspec colnum="6" colname="col6" colwidth="1*"/>
         <thead>
           <row>
-            <entry align="center">Tag Name</entry>
-            <entry align="center">config:configuration Attribute</entry>
+            <entry align="center">Property Name</entry>
             <entry align="center">Description</entry>
             <entry align="center">Required</entry>
             <entry align="center">Default Value</entry>
-            <entry align="center">Child Tag</entry>
           </row>
         </thead>
 
         <tbody>
           <row>
-            <entry>ROOT</entry>
-            <entry />
-            <entry />
-            <entry />
-            <entry />
             <entry>address</entry>
-          </row>
-          <row>
-            <entry>address</entry>
-            <entry />
             <entry>
             	To guarantee uniqueness on the physical network,
             	define IP address or MAC address of network interface card as value.
@@ -48,7 +35,6 @@
             </entry>
             <entry align="center">False</entry>
             <entry>Random creation</entry>
-            <entry />
           </row>
         </tbody>
       </tgroup>

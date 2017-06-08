@@ -43,27 +43,27 @@ public class IdgenServiceTest {
 	DataSource dataSource;
 
 	@Inject
-	@Named("UUIdGenService")
+	@Named("uuidGenService")
 	IdGenService uuid;
 
 	@Inject
-	@Named("TableIdGenSimpleService")
+	@Named("tableIdGenSimpleService")
 	IdGenService tableidSimple;
 
 	@Inject
-	@Named("TableIdGenSimpleServiceWithKey")
+	@Named("tableIdGenSimpleServiceWithKey")
 	IdGenService tableidSimpleWithKey;
 
 	@Inject
-	@Named("TableIdGenWithMixPrefix")
+	@Named("tableIdGenWithMixPrefix")
 	IdGenService tableidMixPrefix;
 
 	@Inject
-	@Named("TableIdGenWithTimestamp")
+	@Named("tableIdGenWithTimestamp")
 	IdGenService tableidTimestamp;
 
 	@Inject
-	@Named("SequenceIdGenService")
+	@Named("sequenceIdGenService")
 	IdGenService sequenceid;
 
 	/**

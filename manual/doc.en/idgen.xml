@@ -33,7 +33,7 @@
 			<year>2007-2011</year>
 			<holder>Samsung SDS</holder>
 		</copyright>
-		<releaseinfo>Version 1.0.0</releaseinfo>
+		<releaseinfo>Version 1.0.2</releaseinfo>
 
 		<productname>Anyframe Idgen Plugin</productname>
 		
@@ -63,7 +63,7 @@
 			    idgen plugin is composed of libraries whose function is to create unique IDs.
 			</para>		
 			<para role="introduction_title"><emphasis role="bold">Installation</emphasis></para>
-			<para>Install idgen plugin by inputting the following command in the Command window.</para>
+			<para>Install idgen plugin by entering the following command in the Command window.</para>
 			<programlisting language="java"><![CDATA[mvn anyframe:install -Dname=idgen]]></programlisting>
 			<para>
 				The installation result can be checked by using the installed (mvn anyframe:installed) or the jetty:run (mvn clean jetty:run) commands. 
@@ -81,7 +81,7 @@
 					</thead>
 					<tbody>
 						<row>
-							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/core/1.0.0/reference/htmlsingle/core.html">core</ulink></entry>
+							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/essential/core/1.0.1/reference/htmlsingle/core.html">core</ulink></entry>
 							<entry align="center" valign="middle">2.0.0 > *</entry>
 						</row>
 					</tbody>
